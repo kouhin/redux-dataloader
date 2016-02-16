@@ -14,3 +14,5 @@ coverage
 node_modules
 webpack-assets.json
 lib
+dist
+.tern-port

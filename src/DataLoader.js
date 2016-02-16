@@ -5,30 +5,30 @@ import { loadFailure, loadSuccess } from './action'
 /**
  * Create a new DataLoaderDescriptor
  *
- * @param {string|object|function} actionType Action Type
+ * @param {string|object|function} pattern pattern to match action
  * @param {object} params parameters
  * @param {object} options options
  * @returns {DataLoaderTaskDescriptor} a descriptor object for creating data loader
  */
-function createLoader (actionType, params, options) {
-  return new DataLoaderTaskDescriptor(actionType, params, options)
+function createLoader (pattern, params, options) {
+  return new DataLoaderTaskDescriptor(pattern, params, options)
 }
 
 class DataLoaderTaskDescriptor {
-  constructor (actionType, params, options = {}) {
-    this.actionType = actionType
+  constructor (pattern, params, options = {}) {
+    this.pattern = pattern
     this.params = params
     this.ttl = options.ttl || 10000 // Default TTL: 10s
   }
 
-  supports (actionType) {
-    switch (typeof this.actionType) {
+  supports (action) {
+    switch (typeof this.pattern) {
       case 'object':
-        return isEqual(this.actionType, actionType)
+        return isEqual(this.pattern, action)
       case 'function':
-        return this.actionType(actionType)
+        return this.pattern(action)
       default:
-        return this.actionType === actionType
+        return this.pattern === action.type
     }
   }
 
@@ -83,7 +83,10 @@ class DataLoaderTask {
     this.params.loading(this.context)
     return this.params.local(this.context)
       .then((result) => {
-        return result || this.params.remote(this.context)
+        if (result !== undefined && result !== null) {
+          return result
+        }
+        return this.params.remote(this.context)
       })
       .then((result) => {
         const successAction = this.params.success(this.context, result)

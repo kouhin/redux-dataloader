@@ -1,35 +1,58 @@
 {
   "name": "redux-dataloader",
-  "version": "0.0.1",
-  "description": "Loading async data with redux",
+  "version": "0.1.0",
+  "description": "Loads async data for Redux apps focusing on preventing duplicated requests and dealing with async dependencies.",
   "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kouhin/redux-dataloader.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kouhin/redux-dataloader/issues"
+  },
+  "homepage": "https://github.com/kouhin/redux-dataloader",
   "scripts": {
     "clean": "rimraf lib dist coverage",
-    "build": "rimraf lib && babel src --out-dir lib",
-    "prepublish": "npm run clean && npm run check:src && npm run build",
-    "postinstall": "npm run prepublish",
-    "check:src": "npm run lint",
-    "lint": "standard src test"
+    "build": "npm run clean && npm run build:commonjs && npm run build:umd",
+    "build:commonjs": "babel src --out-dir lib",
+    "build:umd": "webpack",
+    "prepublish": "npm run clean && npm test && npm run build",
+    "lint": "standard src test",
+    "test": "npm run lint && mocha --compilers js:babel-core/register --reporter spec test/*.js"
   },
+  "files": [
+    "dist",
+    "lib",
+    "src"
+  ],
   "keywords": [
     "redux",
     "react",
+    "middleware",
+    "redux-middleware",
     "data",
     "loading",
-    "async"
+    "async",
+    "effects",
+    "side effects",
+    "isomorphic"
   ],
   "author": "Bin Hou",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.5.1",
     "babel-core": "^6.5.2",
+    "babel-loader": "^6.2.2",
     "babel-preset-es2015": "^6.5.0",
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-0": "^6.5.0",
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5",
     "rimraf": "^2.5.2",
-    "standard": "^6.0.5"
+    "standard": "^6.0.5",
+    "webpack": "^1.12.13"
   },
   "dependencies": {
-    "lodash": "^4.3.0"
+    "lodash": "^4.4.0"
   }
 }

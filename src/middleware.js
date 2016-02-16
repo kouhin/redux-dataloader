@@ -1,8 +1,6 @@
 import findKey from 'lodash/findKey'
 import find from 'lodash/find'
 import isEqual from 'lodash/isEqual'
-import merge from 'lodash/merge'
-import uniqueId from 'lodash/uniqueId'
 
 import { LOAD_DATA_REQUEST_ACTION } from './action'
 
@@ -10,48 +8,60 @@ function findRunningTaskKey (runningTasksMap, action) {
   return findKey(runningTasksMap, (o) => isEqual(o.action, action))
 }
 
-export default function createDataLoaderMiddleware (loaders, context) {
+function isPromise (val) {
+  return val && typeof val.then === 'function'
+}
+
+export default function createDataLoaderMiddleware (loaders, ...args) {
   const runningTasks = {}
+
+  let currentId = 1
+  const uniqueId = (prefix) => `${prefix}${currentId++}`
 
   const middleware = ({ dispatch, getState }) => {
     const ctx = {
-      ...context,
+      ...args,
       dispatch,
       getState
     }
 
-    return (next) => (loadDataAction) => {
-      if (loadDataAction.type !== LOAD_DATA_REQUEST_ACTION) {
-        return next(loadDataAction)
-      }
-      next(loadDataAction)
-
-      const { action } = loadDataAction.payload
-      const runningTaskKey = findRunningTaskKey(runningTasks, action)
-      if (runningTaskKey) {
-        return runningTasks[runningTaskKey].promise
+    return (next) => (receivedAction) => {
+      if (!isPromise(receivedAction)) {
+        return next(receivedAction)
       }
 
-      const taskDescriptor = find(loaders, (loader) => loader.supports(action.type))
+      receivedAction.then((loadDataAction) => {
+        if (loadDataAction.type !== LOAD_DATA_REQUEST_ACTION) {
+          return next(loadDataAction)
+        }
 
-      if (!taskDescriptor) {
-        throw new Error('No loader for action', action)
-      }
+        const { action } = loadDataAction.payload
+        const runningTaskKey = findRunningTaskKey(runningTasks, action)
+        if (runningTaskKey) {
+          return runningTasks[runningTaskKey].promise
+        }
 
-      const key = uniqueId(`${action.type}__`)
-      const runningTask = taskDescriptor.newTask(ctx, action).execute() // runningTask is a Promise
-      runningTasks[key] = {
-        action,
-        promise: runningTask
-      }
+        const taskDescriptor = find(loaders, (loader) => loader.supports(action))
 
-      if (taskDescriptor.ttl) {
-        setTimeout(() => {
-          delete runningTasks[key]
-        }, taskDescriptor.ttl)
-      }
+        if (!taskDescriptor) {
+          throw new Error('No loader for action', action)
+        }
 
-      return runningTask
+        const key = uniqueId(`${action.type}__`)
+        const runningTask = taskDescriptor.newTask(ctx, action).execute() // runningTask is a Promise
+        runningTasks[key] = {
+          action,
+          promise: runningTask
+        }
+
+        if (taskDescriptor.ttl) {
+          setTimeout(() => {
+            delete runningTasks[key]
+          }, taskDescriptor.ttl)
+        }
+
+        return runningTask
+      })
     }
   }
 
