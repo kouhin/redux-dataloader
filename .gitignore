@@ -1,0 +1,16 @@
+.DS_Store
+._*
+*~
+logs
+*.log
+npm-debug.log*
+pids
+*.pid
+*.seed
+lib-cov
+target
+build
+coverage
+node_modules
+webpack-assets.json
+lib

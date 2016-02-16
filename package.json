@@ -1,0 +1,35 @@
+{
+  "name": "redux-dataloader",
+  "version": "0.0.1",
+  "description": "Loading async data with redux",
+  "main": "lib/index.js",
+  "scripts": {
+    "clean": "rimraf lib dist coverage",
+    "build": "rimraf lib && babel src --out-dir lib",
+    "prepublish": "npm run clean && npm run check:src && npm run build",
+    "postinstall": "npm run prepublish",
+    "check:src": "npm run lint",
+    "lint": "standard src test"
+  },
+  "keywords": [
+    "redux",
+    "react",
+    "data",
+    "loading",
+    "async"
+  ],
+  "author": "Bin Hou",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "^6.5.1",
+    "babel-core": "^6.5.2",
+    "babel-preset-es2015": "^6.5.0",
+    "babel-preset-react": "^6.5.0",
+    "babel-preset-stage-0": "^6.5.0",
+    "rimraf": "^2.5.2",
+    "standard": "^6.0.5"
+  },
+  "dependencies": {
+    "lodash": "^4.3.0"
+  }
+}
