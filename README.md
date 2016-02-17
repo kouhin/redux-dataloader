@@ -24,7 +24,7 @@ npm install redux-dataloader --save
 
 ## Usage
 
-### 3. Define actions and update the request action with load()
+### 1. Define actions and update the request action with load()
 
 #### `userActions.js`
 ```javascript
@@ -54,7 +54,7 @@ export function fetchUserFailure (userId, error) {
 
 ```
 
-### 1. Create a data loader
+### 2. Create a data loader
 
 #### `dataloaders.js`
 
@@ -121,7 +121,7 @@ const userLoader = createLoader (userActions.FETCH_USER_REQUEST, {
 export default [userLoader];
 ```
 
-### 2. Register middleware
+### 3. Register middleware
 
 #### `configureStore.js`
 
