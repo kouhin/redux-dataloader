@@ -1,6 +1,7 @@
 import isEqual from 'lodash/isEqual'
 
 import { loadFailure, loadSuccess } from './action'
+import { isAction } from './utils'
 
 /**
  * Create a new DataLoaderDescriptor
@@ -26,7 +27,7 @@ class DataLoaderTaskDescriptor {
       case 'object':
         return isEqual(this.pattern, action)
       case 'function':
-        return this.pattern(action)
+        return this.pattern(action) === true
       default:
         return this.pattern === action.type
     }
@@ -40,8 +41,8 @@ class DataLoaderTaskDescriptor {
 
 class DataLoaderTask {
   constructor (context, action, params = {}) {
-    if (typeof action !== 'object') {
-      return Promise.reject('action must be a plain object')
+    if (!isAction(action)) {
+      throw new Error('action must be a plain object')
     }
 
     this.context = {
@@ -81,7 +82,7 @@ class DataLoaderTask {
     }
 
     this.params.loading(this.context)
-    return this.params.local(this.context)
+    return Promise.resolve(this.params.local(this.context))
       .then((result) => {
         if (result !== undefined && result !== null) {
           return result

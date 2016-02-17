@@ -1,6 +1,6 @@
 {
   "name": "redux-dataloader",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Loads async data for Redux apps focusing on preventing duplicated requests and dealing with async dependencies.",
   "main": "lib/index.js",
   "repository": {
@@ -17,8 +17,10 @@
     "build:commonjs": "babel src --out-dir lib",
     "build:umd": "webpack",
     "prepublish": "npm run clean && npm test && npm run build",
-    "lint": "standard src test",
-    "test": "npm run lint && mocha --compilers js:babel-core/register --reporter spec test/*.js"
+    "test": "npm run test:lint && npm run test:mocha && npm run test:cov",
+    "test:lint": "standard src test",
+    "test:mocha": "mocha --compilers js:babel-core/register --reporter spec test/*.js",
+    "test:cov": "babel-node $(npm bin)/isparta cover $(npm bin)/_mocha -- --recursive"
   },
   "files": [
     "dist",
@@ -47,8 +49,13 @@
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-0": "^6.5.0",
     "chai": "^3.5.0",
+    "chai-as-promised": "^5.2.0",
+    "isparta": "^4.0.0",
+    "istanbul": "^0.4.2",
     "mocha": "^2.4.5",
     "rimraf": "^2.5.2",
+    "sinon": "^1.17.3",
+    "sinon-chai": "^2.8.0",
     "standard": "^6.0.5",
     "webpack": "^1.12.13"
   },

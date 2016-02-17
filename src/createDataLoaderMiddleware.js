@@ -2,17 +2,14 @@ import findKey from 'lodash/findKey'
 import find from 'lodash/find'
 import isEqual from 'lodash/isEqual'
 
+import { isPromise } from './utils'
 import { LOAD_DATA_REQUEST_ACTION } from './action'
 
 function findRunningTaskKey (runningTasksMap, action) {
   return findKey(runningTasksMap, (o) => isEqual(o.action, action))
 }
 
-function isPromise (val) {
-  return val && typeof val.then === 'function'
-}
-
-export default function createDataLoaderMiddleware (loaders, ...args) {
+export default function createDataLoaderMiddleware (loaders, args) {
   const runningTasks = {}
 
   let currentId = 1

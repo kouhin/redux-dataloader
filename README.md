@@ -11,6 +11,10 @@ Deeply inspired by [alt Data Souces API](http://alt.js.org/docs/async), also ins
 Instead of using redux-thunk, it handles wrapped actions and sideload async data from local or remote data sources. 
 It also caches data requests for a while in order to prevent duplicated requests.
 
+## TODOs
+
+- [ ] complete test
+- [ ] add real-world example with redux, redux-router, async data loading, async dependencies
 
 ## Installation
 
@@ -77,7 +81,7 @@ const userLoader = createLoader (userActions.FETCH_USER_REQUEST, {
     const userId = action.payload.userId
     return userActions.fetchUserFailure(userId, error);
   },
-  /* 
+  /*
    * (optional) By default, original request action will be dispatched. But you can still modify this process.
    */
   // loading: ({ action }) => {}
@@ -133,7 +137,7 @@ const fetcher = new Fetcher({
 });
 
 // create middleware, you can add extra arguments to data loader context
-const dataLoaderMiddleware = createDataLoaderMiddleware(loaders, fetchr)
+const dataLoaderMiddleware = createDataLoaderMiddleware(loaders, { fetchr })
 
 const store = createStore(
   reducer,
@@ -242,7 +246,7 @@ shouldFetch -> loading -> local -> remote -> success or error
 
  `action` is orignal dispatched action. It usually contains parameters for fetching data.
 
- You can use `createDataLoaderMiddleware(loaders, ...args)` to add extra objects to context.
+ You can use `createDataLoaderMiddleware(loaders, args)` to add extra objects to context.
 
 #### **`options:object`**
 
@@ -252,7 +256,7 @@ shouldFetch -> loading -> local -> remote -> success or error
 
 1. `ttl`: Provides a value in millisecond to cache the loader in order to prevent duplicated requests. (_default: 10000_)   
 
-### **createDataLoaderMiddleware(loaders: Array, ...args:any)**
+### **createDataLoaderMiddleware(loaders: Array, args:object)**
 
 Returns a redux middleware.
 
@@ -262,11 +266,11 @@ Returns a redux middleware.
 
 An array of created data loaders.
 
-#### **`args:any`**
+#### **`args:object`**
 
 (_optional)
 
-All the args will be added to context.
+All the args(key-value) will be added to context.
 
 ### **load(action:object)**
 
