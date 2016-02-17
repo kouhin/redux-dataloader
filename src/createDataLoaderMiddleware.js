@@ -27,7 +27,7 @@ export default function createDataLoaderMiddleware (loaders, args) {
         return next(receivedAction)
       }
 
-      receivedAction.then((loadDataAction) => {
+      return receivedAction.then((loadDataAction) => {
         if (loadDataAction.type !== LOAD_DATA_REQUEST_ACTION) {
           return next(loadDataAction)
         }

@@ -1,6 +1,6 @@
 {
   "name": "redux-dataloader",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Loads async data for Redux apps focusing on preventing duplicated requests and dealing with async dependencies.",
   "main": "lib/index.js",
   "repository": {
