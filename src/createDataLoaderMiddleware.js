@@ -27,12 +27,12 @@ export default function createDataLoaderMiddleware (loaders, args) {
         return next(receivedAction)
       }
 
-      return receivedAction.then((loadDataAction) => {
-        if (loadDataAction.type !== LOAD_DATA_REQUEST_ACTION) {
-          return next(loadDataAction)
+      return receivedAction.then((asyncAction) => {
+        if (asyncAction.type !== LOAD_DATA_REQUEST_ACTION) {
+          return next(asyncAction)
         }
-
-        const { action } = loadDataAction.payload
+        next(asyncAction) // dispatch request action
+        const { action } = asyncAction.payload
         const runningTaskKey = findRunningTaskKey(runningTasks, action)
         if (runningTaskKey) {
           return runningTasks[runningTaskKey].promise
