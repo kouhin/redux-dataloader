@@ -1,6 +1,6 @@
 # Redux Data Loader
 
-[![Build Status](https://travis-ci.org/kouhin/redux-dataloader.svg)](https://travis-ci.org/kouhin/redux-dataloader)
+[![Build Status](https://travis-ci.org/kouhin/redux-dataloader.svg?branch=master)](https://travis-ci.org/kouhin/redux-dataloader)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 [![npm](https://img.shields.io/npm/v/redux-dataloader.svg)](https://npmjs.org/package/redux-dataloader)
 
