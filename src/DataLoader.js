@@ -60,7 +60,7 @@ class DataLoaderTask {
         throw new Error('error() is not implemented', action.type)
       },
       loading ({ dispatch, action }) {
-        dispatch(action)
+        return action;
       },
       shouldFetch () {
         return true
@@ -81,7 +81,7 @@ class DataLoaderTask {
       return Promise.resolve()
     }
 
-    this.params.loading(this.context)
+    this.context.dispatch(this.params.loading(this.context));
     return Promise.resolve(this.params.local(this.context))
       .then((result) => {
         if (result !== undefined && result !== null) {
