@@ -19,7 +19,7 @@ describe('test load()', () => {
         action: requestAction
       }
     }
-    chai.assert.eventually.deepEqual(promise, expect)
+    return chai.assert.eventually.deepEqual(promise, expect)
   })
 
   it('pass a non-object to load(), should throw an Error', () => {
