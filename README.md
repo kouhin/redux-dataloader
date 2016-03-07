@@ -8,7 +8,7 @@ Loads async data for Redux apps focusing on preventing duplicated requests and d
 
 Deeply inspired by [alt Data Souces API](http://alt.js.org/docs/async), also inspired by [redux-saga](https://github.com/yelouafi/redux-saga).
 
-Instead of using redux-thunk, it handles wrapped actions and sideload async data from local or remote data sources. 
+Instead of using redux-thunk, it handles wrapped actions and sideload async data from local or remote data sources.
 It also caches data requests for a while in order to prevent duplicated requests.
 
 ## TODOs
@@ -145,6 +145,78 @@ const store = createStore(
 )
 
 // ...
+```
+
+### 4. Use it for your application
+
+Then, just use it in your application.
+The following is an example that combined with redial for isomorphic use.
+
+```javascript
+import { provideHooks } from 'redial'
+import { fetchUserRequest } from 'userActions'
+import { fetchArticleRequest } from 'articleAction'
+import { fetchArticleSkinRequest } from 'articleSkinAction'
+import { getUserByUsername } from 'userReducer'
+import { getArticle } from 'articleReducer'
+import { getArticleSkin } from 'articleSkinReducer'
+
+// the router location is: /:username/:articleId
+// Data dependency: user <= article <= articleSkin
+async function fetchData({param, dispatch, getState}) {
+  try {
+    // 1. Fetch user
+    const username = params.username
+    await dispatch(fetchUserRequest(username)) // wait for response
+
+    // 2. Fetch article by userId and articleId, you may use useId for authentication
+    const user = getUserByUsername(username)
+    const articleId = params.articleId
+    await dispatch(fetchArticleRequest(user.id, articleId))
+
+    // 3. Fetch article skin by articleId
+    const article = getArticle(articleId)
+    await dispatch(fetchArticleSkinRequest(article.skinId))
+  } catch (err) {
+    // ...
+  }
+}
+
+function mapStateToProps(state, owndProps) {
+  // ...
+}
+
+@connect(mapStateToProps)
+@provideHooks({
+  fetch: fetchData
+})
+export default class ArticleContainer extends React.Component {
+  // ...
+}
+```
+
+You can also write `fetchData()` with Promise:
+
+```javascript
+function fetchData({param, dispatch, getState}) {
+  return Promise.resolve().then(() => {
+    // 1. Fetch user
+    const username = params.username
+    return dispatch(fetchUserRequest(username))
+  }).then(() => {
+    // 2. Fetch article by userId and articleId, you may use useId for authentication
+    const user = getUserByUsername(username) // get User from state
+    const articleId = params.articleId
+    return dispatch(fetchArticleRequest(user.id, articleId))
+  }).then(() => {
+    // 3. Fetch article skin by articleId
+    const article = getArticle(articleId) // get Article from state
+    return dispatch(fetchArticleSkinRequest(article.skinId))
+  }).catch((err) => {
+    // error handler
+    // ...
+  })
+}
 ```
 
 ## Documentation
