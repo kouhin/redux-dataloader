@@ -150,7 +150,7 @@ const store = createStore(
 ### 4. Use it for your application
 
 Then, just use it in your application.
-The following is an example that combined with redial for isomorphic use.
+The following is an example that combined with [redial](https://github.com/markdalgleish/redial) for isomorphic use.
 
 ```javascript
 import { provideHooks } from 'redial'
