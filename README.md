@@ -32,7 +32,7 @@ import { load } from 'redux-dataloader'
 
 export const FETCH_USER_REQUEST = 'myapp/user/FETCH_USER/REQUEST'
 export const FETCH_USER_SUCCESS = 'myapp/user/FETCH_USER/SUCCESS'
-export const FETCH_USER_FAILURE = 'myapp/user/FETCH_USER/SUCCESS'
+export const FETCH_USER_FAILURE = 'myapp/user/FETCH_USER/FAILURE'
 
 export function fetchUserRequest (userId) {
   // use `load` to wrap a request action, load() returns a Promise
