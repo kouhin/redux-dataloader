@@ -29,8 +29,9 @@ export default function createDataLoaderMiddleware (loaders, args) {
 
       return receivedAction.then((asyncAction) => {
         if (asyncAction.type !== LOAD_DATA_REQUEST_ACTION) {
-          return next(asyncAction)
+          return next(receivedAction)
         }
+        next(receivedAction) // dispatch data loader request action
         const { action } = asyncAction.payload
         const runningTaskKey = findRunningTaskKey(runningTasks, action)
         if (runningTaskKey) {
