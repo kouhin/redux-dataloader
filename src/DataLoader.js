@@ -65,10 +65,7 @@ class DataLoaderTask {
       shouldFetch () {
         return true
       },
-      local () {
-        return Promise.resolve()
-      },
-      remote ({ action }) {
+      fetch ({ action }) {
         throw new Error('Not implemented', action)
       },
       ...params
@@ -82,13 +79,7 @@ class DataLoaderTask {
     }
 
     this.context.dispatch(this.params.loading(this.context));
-    return Promise.resolve(this.params.local(this.context))
-      .then((result) => {
-        if (result !== undefined && result !== null) {
-          return result
-        }
-        return this.params.remote(this.context)
-      })
+    return Promise.resolve(this.params.fetch(this.context))
       .then((result) => {
         const successAction = this.params.success(this.context, result)
         if (successAction.type === this.action.type) {

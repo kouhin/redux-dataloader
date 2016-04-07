@@ -18,7 +18,7 @@ describe('test createLoader: action matcher', () => {
     error: () => {
       return null
     },
-    remote: () => {
+    fetch: () => {
       return null
     }
   }
@@ -91,7 +91,7 @@ describe('test createLoader: DataLoderTask', () => {
     error: (context, error) => {
       return null
     },
-    remote: (context) => {
+    fetch: (context) => {
       return null
     }
   }
@@ -107,10 +107,9 @@ describe('test createLoader: DataLoderTask', () => {
     chai.expect(() => descriptor.newTask({}, {})).to.throw(Error)
   })
 
-  it('loading -> shouldFetch -> local -> remote -> success', (done) => {
+  it('loading -> shouldFetch -> fetch -> success', (done) => {
     const loaderObj = {
-      local: () => null,
-      remote: () => 20,
+      fetch: () => 20,
       success: () => { return {type: 'USER_SUCCESS'} },
       error: () => { return {type: 'USER_FAILURE'} },
       loading: () => {},
@@ -121,8 +120,7 @@ describe('test createLoader: DataLoderTask', () => {
 
     const loadingSpy = sinon.spy(loaderObj, 'loading')
     const shouldFetchSpy = sinon.spy(loaderObj, 'shouldFetch')
-    const localSpy = sinon.spy(loaderObj, 'local')
-    const remoteSpy = sinon.spy(loaderObj, 'remote')
+    const fetchSpy = sinon.spy(loaderObj, 'fetch')
     const successSpy = sinon.spy(loaderObj, 'success')
     const errorSpy = sinon.spy(loaderObj, 'error')
 
@@ -140,30 +138,27 @@ describe('test createLoader: DataLoderTask', () => {
     promise.should.be.fulfilled.then(() => {
       loadingSpy.should.have.been.calledOnce
       shouldFetchSpy.should.have.been.calledOnce
-      localSpy.should.have.been.calledOnce
-      remoteSpy.should.have.been.calledOnce
+      fetchSpy.should.have.been.calledOnce
       successSpy.should.have.been.calledOnce
       errorSpy.should.have.not.been.called
-      sinon.assert.callOrder(shouldFetchSpy, localSpy, remoteSpy, successSpy)
+      sinon.assert.callOrder(shouldFetchSpy, fetchSpy, successSpy)
     }).should.notify(done)
   })
 
-  it('loading -> shouldFetch -> local -> success', (done) => {
+  it('loading -> shouldFetch(return false) -> noop', (done) => {
     const loaderObj = {
-      local: () => 30,
-      remote: () => 20,
+      fetch: () => 20,
       success: () => { return {type: 'USER_SUCCESS'} },
       error: () => { return {type: 'USER_FAILURE'} },
       loading: () => {},
       shouldFetch: () => {
-        return true
+        return false
       }
     }
 
     const loadingSpy = sinon.spy(loaderObj, 'loading')
     const shouldFetchSpy = sinon.spy(loaderObj, 'shouldFetch')
-    const localSpy = sinon.spy(loaderObj, 'local')
-    const remoteSpy = sinon.spy(loaderObj, 'remote')
+    const fetchSpy = sinon.spy(loaderObj, 'fetch')
     const successSpy = sinon.spy(loaderObj, 'success')
     const errorSpy = sinon.spy(loaderObj, 'error')
 
@@ -179,20 +174,17 @@ describe('test createLoader: DataLoderTask', () => {
       }
     }).execute()
     promise.should.be.fulfilled.then(() => {
-      loadingSpy.should.have.been.calledOnce
       shouldFetchSpy.should.have.been.calledOnce
-      localSpy.should.have.been.calledOnce
-      remoteSpy.should.have.not.been.calledOnce
-      successSpy.should.have.been.calledOnce
+      loadingSpy.should.have.not.been.called
+      fetchSpy.should.have.not.been.calledOnce
+      successSpy.should.have.not.been.called
       errorSpy.should.have.not.been.called
-      sinon.assert.callOrder(shouldFetchSpy, localSpy, successSpy)
     }).should.notify(done)
   })
 
-  it('loading -> shouldFetch -> local -> remote -> error', (done) => {
+  it('loading -> shouldFetch -> fetch -> error', (done) => {
     const loaderObj = {
-      local: () => null,
-      remote: () => Promise.reject('NotFoundError'),
+      fetch: () => Promise.reject('NotFoundError'),
       success: () => { },
       error: (context, err) => { return {type: 'USER_FAILURE', error: err} },
       loading: () => {},
@@ -203,8 +195,7 @@ describe('test createLoader: DataLoderTask', () => {
 
     const loadingSpy = sinon.spy(loaderObj, 'loading')
     const shouldFetchSpy = sinon.spy(loaderObj, 'shouldFetch')
-    const localSpy = sinon.spy(loaderObj, 'local')
-    const remoteSpy = sinon.spy(loaderObj, 'remote')
+    const fetchSpy = sinon.spy(loaderObj, 'fetch')
     const successSpy = sinon.spy(loaderObj, 'success')
     const errorSpy = sinon.spy(loaderObj, 'error')
 
@@ -222,11 +213,10 @@ describe('test createLoader: DataLoderTask', () => {
     promise.should.be.fulfilled.then(() => {
       loadingSpy.should.have.been.calledOnce
       shouldFetchSpy.should.have.been.calledOnce
-      localSpy.should.have.been.calledOnce
-      remoteSpy.should.have.been.calledOnce
+      fetchSpy.should.have.been.calledOnce
       successSpy.should.have.not.been.called
       errorSpy.should.have.been.calledOnce
-      sinon.assert.callOrder(shouldFetchSpy, localSpy, remoteSpy, errorSpy)
+      sinon.assert.callOrder(shouldFetchSpy, fetchSpy, errorSpy)
     }).should.notify(done)
   })
 })
