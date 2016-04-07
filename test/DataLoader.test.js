@@ -219,7 +219,7 @@ describe('test createLoader: DataLoderTask', () => {
         userId: 25
       }
     }).execute()
-    promise.should.be.rejected.then(() => {
+    promise.should.be.fulfilled.then(() => {
       loadingSpy.should.have.been.calledOnce
       shouldFetchSpy.should.have.been.calledOnce
       localSpy.should.have.been.calledOnce

@@ -105,7 +105,7 @@ class DataLoaderTask {
         }
         this.context.dispatch(errorAction)
         this.context.dispatch(loadFailure(this.action, error))
-        return Promise.reject(errorAction)
+        return Promise.resolve(errorAction)
       })
   }
 }
