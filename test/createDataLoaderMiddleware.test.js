@@ -15,7 +15,7 @@ describe('test createDataLoaderMiddleware()', () => {
     },
     error: () => {
     },
-    remote: () => {
+    fetch: () => {
     }
   }
 

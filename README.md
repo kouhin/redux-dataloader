@@ -8,7 +8,7 @@ Loads async data for Redux apps focusing on preventing duplicated requests and d
 
 Deeply inspired by [alt Data Souces API](http://alt.js.org/docs/async), also inspired by [redux-saga](https://github.com/yelouafi/redux-saga).
 
-Instead of using redux-thunk, it handles wrapped actions and sideload async data from local or remote data sources.
+Instead of using redux-thunk, it handles wrapped actions and sideload async data.
 It also caches data requests for a while in order to prevent duplicated requests.
 
 ## TODOs
@@ -86,17 +86,10 @@ const userLoader = createLoader (userActions.FETCH_USER_REQUEST, {
    */
   // loading: ({ action }) => {}
   /*
-   * (optional) Checks in local cache (e.g. localstoreage) first.
-   * if the value is present it'll use that instead.
-   */
-  local: (context) => {
-    // Load data
-  },
-  /*
-   * (required) Fetch data remotely.
+   * (required) Fetch data.
    * We use yahoo/fetchr as an example.
    */
-  remote: (context) => {
+  fetch: (context) => {
     const action = context.action
     const userId = action.payload.userId
 
@@ -108,7 +101,7 @@ const userLoader = createLoader (userActions.FETCH_USER_REQUEST, {
   },
   /*
    * (optional) !!! Different from alt API.
-   * When shouldFetch returns false, it will prevent both local and remote request.
+   * When shouldFetch returns false, it will prevent fetching data.
    */
   shouldFetch: (context) => {
     const action = context.action

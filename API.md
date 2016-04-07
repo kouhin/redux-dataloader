@@ -9,10 +9,7 @@ const exampleLoader = createLoader('ACTION_TYPE_REQUEST',{
   shouldFetch: (context) => {
     // ...
   },
-  local: (context) => {
-    // ...
-  },
-  remote: (context) => {
+  fetch: (context) => {
     // ...
   },
   loading: (context) => {
@@ -48,8 +45,7 @@ When an action that matches pattern is dispatched, the created loader will start
 
 - `shouldFetch`:function _optional_
 - `loading`: function _optional_
-- `local`: function _optional_
-- `remote`: function **required**
+- `fetch`: function **required**
 - `success`: function **required**
 - `error`: function **required**
 
@@ -59,20 +55,11 @@ When an action that matches pattern is dispatched, the created loader will start
 
 This function is called first. If it returns `true`, this data loader will do nothing.
 
-##### **`local(context: object)`**
-
-(_optional_)
-
-This function is called before `remote()`. When it returns `undefined` or `null`, data loader will fetch data by `remote()`.
-Otherwise, `success()` or `error()` will receive the return value.
-
-Notice that when it causes an exception, `error()` will receive this error. You may deal with the exception in `local()` if you want to use `remote()` as a fallback method when an exception is occured locally.
-
-##### **`remote(context: object)`**
+##### **`fetch(context: object)`**
 
 (**required**)
 
-This function is used to fetch data remotely. It is **only** called if `local()` returns `undefined` or `null`.
+This function is used to fetch data. It is **only** called if `shouldFetch()` returns `true`.
 
 ##### **`success(context:object, result:any)`**
 
@@ -90,12 +77,12 @@ Must returns an action. Called whenever a value rejects.
 
 (_optional_)
 
-Must returns an action. Called before fetching data locally.
+Must returns an action. Called before fetching data.
 
 `functions` will be called in this order:
 
 ```
-##### shouldFetch -> loading -> local -> remote -> success or error
+##### shouldFetch -> loading -> fetch -> success or error
 ```
 
 #### About **`context:object`**
