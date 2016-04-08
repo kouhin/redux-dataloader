@@ -1,0 +1,4 @@
+--recursive
+--compilers js:babel-core/register
+--reporter spec
+--require babel-polyfill

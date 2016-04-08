@@ -16,11 +16,9 @@
     "build": "npm run clean && npm run build:commonjs && npm run build:umd",
     "build:commonjs": "babel src --out-dir lib",
     "build:umd": "webpack",
-    "prepublish": "npm run clean && npm test && npm run build",
-    "test": "npm run test:lint && npm run test:mocha && npm run test:cov",
-    "test:lint": "standard src test",
-    "test:mocha": "mocha --compilers js:babel-core/register --reporter spec test/*.js",
-    "test:cov": "babel-node $(npm bin)/isparta cover $(npm bin)/_mocha -- --recursive"
+    "prepublish": "npm run clean && npm lint && npm test && npm run build",
+    "test": "babel-node $(npm bin)/isparta cover $(npm bin)/_mocha test/*.js -- --opts mocha.opts",
+    "lint": "standard src test"
   },
   "files": [
     "dist",

@@ -65,39 +65,37 @@ class DataLoaderTask {
       shouldFetch () {
         return true
       },
-      fetch ({ action }) {
+      async fetch ({ action }) {
         throw new Error('Not implemented', action)
       },
       ...params
     }
   }
 
-  execute () {
+  async execute () {
     if (!this.params.shouldFetch(this.context)) {
       this.context.dispatch(loadSuccess(this.action)) // load nothing
-      return Promise.resolve()
+      return null;
     }
-
     this.context.dispatch(this.params.loading(this.context));
-    return Promise.resolve(this.params.fetch(this.context))
-      .then((result) => {
-        const successAction = this.params.success(this.context, result)
-        if (successAction.type === this.action.type) {
-          throw new Error('Result action type equals origial action type', this.action)
-        }
-        this.context.dispatch(successAction)
-        this.context.dispatch(loadSuccess(this.action, result))
-        return Promise.resolve(successAction)
-      })
-      .catch((error) => {
-        const errorAction = this.params.error(this.context, error)
-        if (errorAction.type === this.action.type) {
-          throw new Error('Result action type equals origial action type', this.action)
-        }
-        this.context.dispatch(errorAction)
-        this.context.dispatch(loadFailure(this.action, error))
-        return Promise.resolve(errorAction)
-      })
+    try {
+      const result = await this.params.fetch(this.context);
+      const successAction = this.params.success(this.context, result)
+      if (successAction.type === this.action.type) {
+        throw new Error('Result action type equals origial action type', this.action)
+      }
+      this.context.dispatch(successAction)
+      this.context.dispatch(loadSuccess(this.action, result))
+      return successAction;
+    } catch (error) {
+      const errorAction = this.params.error(this.context, error)
+      if (errorAction.type === this.action.type) {
+        throw new Error('Result action type equals origial action type', this.action)
+      }
+      this.context.dispatch(errorAction)
+      this.context.dispatch(loadFailure(this.action, error))
+      return errorAction
+    }
   }
 }
 
