@@ -1,7 +1,6 @@
 # Redux Data Loader
 
 [![Build Status](https://travis-ci.org/kouhin/redux-dataloader.svg?branch=master)](https://travis-ci.org/kouhin/redux-dataloader)
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 [![npm](https://img.shields.io/npm/v/redux-dataloader.svg)](https://npmjs.org/package/redux-dataloader)
 
 Loads async data for Redux apps focusing on preventing duplicated requests and dealing with async dependencies.
@@ -10,11 +9,6 @@ Deeply inspired by [alt Data Souces API](http://alt.js.org/docs/async), also ins
 
 Instead of using redux-thunk, it handles wrapped actions and sideload async data.
 It also caches data requests for a while in order to prevent duplicated requests.
-
-## TODOs
-
-- [ ] complete test
-- [ ] add real-world example with redux, redux-router, async data loading, async dependencies
 
 ## Installation
 

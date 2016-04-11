@@ -1,30 +1,30 @@
-export const LOAD_DATA_REQUEST_ACTION = '@redux-dataloader/REQUEST'
-export const LOAD_DATA_SUCCESS_ACTION = '@redux-dataloader/SUCCESS'
-export const LOAD_DATA_FAILURE_ACTION = '@redux-dataloader/FAILURE'
+export const LOAD_DATA_REQUEST_ACTION = '@redux-dataloader/REQUEST';
+export const LOAD_DATA_SUCCESS_ACTION = '@redux-dataloader/SUCCESS';
+export const LOAD_DATA_FAILURE_ACTION = '@redux-dataloader/FAILURE';
 
-export function loadFailure (action, error) {
+export function loadFailure(action, error) {
   return {
     type: LOAD_DATA_FAILURE_ACTION,
     payload: {
-      error
+      error,
     },
     meta: {
-      action
+      action,
     },
-    error: true
-  }
+    error: true,
+  };
 }
 
-export function loadSuccess (action, data) {
+export function loadSuccess(action, data) {
   return {
     type: LOAD_DATA_SUCCESS_ACTION,
     payload: {
-      data
+      data,
     },
     meta: {
-      action
-    }
-  }
+      action,
+    },
+  };
 }
 
 /**
@@ -33,11 +33,11 @@ export function loadSuccess (action, data) {
  * @param {Object} action
  * @return {Object} Loading Data Action
  */
-export function loadRequest (action) {
+export function loadRequest(action) {
   return {
     type: LOAD_DATA_REQUEST_ACTION,
     payload: {
-      action
-    }
-  }
+      action,
+    },
+  };
 }
