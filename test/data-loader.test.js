@@ -5,7 +5,7 @@ import chaiAsPromised from 'chai-as-promised';
 import { describe, it } from 'mocha';
 import sinon from 'sinon';
 
-import { createLoader, fixedWait } from '../src';
+import { createLoader } from '../src';
 
 chai.use(sinonChai);
 chai.use(chaiAsPromised);
