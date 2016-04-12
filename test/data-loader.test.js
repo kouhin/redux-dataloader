@@ -7,7 +7,6 @@ import sinon from 'sinon';
 
 import { createLoader } from '../src';
 
-chai.should();
 chai.use(sinonChai);
 chai.use(chaiAsPromised);
 
@@ -111,14 +110,14 @@ describe('test createLoader: DataLoderTask', () => {
       },
     }).execute();
 
-    return promise.should.be.fulfilled.then(() => {
-      loadingSpy.should.have.been.calledOnce;
-      shouldFetchSpy.should.have.been.calledOnce;
-      fetchSpy.should.have.been.calledOnce;
-      successSpy.should.have.been.calledOnce;
-      errorSpy.should.have.not.been.called;
+    return expect(promise.then(() => {
+      expect(loadingSpy).to.have.been.calledOnce;
+      expect(shouldFetchSpy).to.have.been.calledOnce;
+      expect(fetchSpy).to.have.been.calledOnce;
+      expect(successSpy).to.have.been.calledOnce;
+      expect(errorSpy).to.have.not.been.called;
       sinon.assert.callOrder(shouldFetchSpy, fetchSpy, successSpy);
-    }).should.notify(done);
+    })).to.be.fulfilled.notify(done);
   });
 
   it('loading -> shouldFetch(return false) -> noop', (done) => {
@@ -147,13 +146,13 @@ describe('test createLoader: DataLoderTask', () => {
         userId: 25,
       },
     }).execute();
-    return promise.should.be.fulfilled.then(() => {
-      shouldFetchSpy.should.have.been.calledOnce;
-      loadingSpy.should.have.not.been.called;
-      fetchSpy.should.have.not.been.calledOnce;
-      successSpy.should.have.not.been.called;
-      errorSpy.should.have.not.been.called;
-    }).should.notify(done);
+    return expect(promise.then(() => {
+      expect(shouldFetchSpy).to.have.been.calledOnce;
+      expect(loadingSpy).to.have.not.been.called;
+      expect(fetchSpy).to.have.not.been.calledOnce;
+      expect(successSpy).to.have.not.been.called;
+      expect(errorSpy).to.have.not.been.called;
+    })).to.be.fulfilled.notify(done);
   });
 
   it('loading -> shouldFetch -> fetch -> error', (done) => {
@@ -182,14 +181,14 @@ describe('test createLoader: DataLoderTask', () => {
         userId: 25,
       },
     }).execute();
-    return promise.should.be.fulfilled.then(() => {
-      loadingSpy.should.have.been.calledOnce;
-      shouldFetchSpy.should.have.been.calledOnce;
-      fetchSpy.should.have.been.calledOnce;
-      successSpy.should.have.not.been.called;
-      errorSpy.should.have.been.calledOnce;
+    return expect(promise.then(() => {
+      expect(loadingSpy).to.have.been.calledOnce;
+      expect(shouldFetchSpy).to.have.been.calledOnce;
+      expect(fetchSpy).to.have.been.calledOnce;
+      expect(successSpy).to.have.not.been.called;
+      expect(errorSpy).to.have.been.calledOnce;
       sinon.assert.callOrder(shouldFetchSpy, fetchSpy, errorSpy);
-    }).should.notify(done);
+    })).to.be.fulfilled.notify(done);
   });
 });
 /* eslint-enable no-unused-expressions */

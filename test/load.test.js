@@ -1,9 +1,9 @@
-import chai, { expect } from 'chai';
+import { expect } from 'chai';
 import { describe, it } from 'mocha';
 
 import { load, LOAD_DATA_REQUEST_ACTION } from '../src';
 
-describe('test load()', () => {
+describe('load()', () => {
   const requestAction = {
     type: 'LOAD_USER_REQUEST',
     payload: {
@@ -19,7 +19,7 @@ describe('test load()', () => {
         action: requestAction,
       },
     };
-    return chai.assert.eventually.deepEqual(promise, expected);
+    return expect(promise).to.eventually.deep.equal(expected);
   });
 
   it('pass a non-object to load(), should throw an Error', () => {

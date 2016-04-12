@@ -1,6 +1,7 @@
-import * as action from '../src/action';
-import chai from 'chai';
+import { expect } from 'chai';
 import { describe, it } from 'mocha';
+
+import * as action from '../src/action';
 
 describe('test actions', () => {
   const requestAction = {
@@ -11,14 +12,14 @@ describe('test actions', () => {
   };
 
   it('test loadRequest', () => {
-    const expect = {
+    const expected = {
       type: action.LOAD_DATA_REQUEST_ACTION,
       payload: {
         action: requestAction,
       },
     };
     const actual = action.loadRequest(requestAction);
-    chai.assert.deepEqual(actual, expect);
+    expect(actual).to.deep.equal(expected);
   });
 
   it('test loadSuccess', () => {
@@ -27,7 +28,7 @@ describe('test actions', () => {
       username: 'tom',
       age: 25,
     };
-    const expect = {
+    const expected = {
       type: action.LOAD_DATA_SUCCESS_ACTION,
       payload: {
         data: result,
@@ -37,12 +38,12 @@ describe('test actions', () => {
       },
     };
     const actual = action.loadSuccess(requestAction, result);
-    chai.assert.deepEqual(actual, expect);
+    expect(actual).to.deep.equal(expected);
   });
 
   it('test loadFailure', () => {
     const err = new Error('Not Found');
-    const expect = {
+    const expected = {
       type: action.LOAD_DATA_FAILURE_ACTION,
       payload: {
         error: err,
@@ -53,6 +54,6 @@ describe('test actions', () => {
       error: true,
     };
     const actual = action.loadFailure(requestAction, err);
-    chai.assert.deepEqual(actual, expect);
+    expect(actual).to.deep.equal(expected);
   });
 });
