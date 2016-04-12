@@ -33,11 +33,15 @@ export function loadSuccess(action, data) {
  * @param {Object} action
  * @return {Object} Loading Data Action
  */
-export function loadRequest(action) {
-  return {
+export function loadRequest(action, options) {
+  const result = {
     type: LOAD_DATA_REQUEST_ACTION,
-    payload: {
+    meta: {
       action,
     },
   };
+  if (options) {
+    result.meta.options = options;
+  }
+  return result;
 }

@@ -15,7 +15,7 @@ describe('load()', () => {
     const promise = load(requestAction);
     const expected = {
       type: LOAD_DATA_REQUEST_ACTION,
-      payload: {
+      meta: {
         action: requestAction,
       },
     };

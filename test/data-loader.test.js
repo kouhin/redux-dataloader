@@ -5,7 +5,7 @@ import chaiAsPromised from 'chai-as-promised';
 import { describe, it } from 'mocha';
 import sinon from 'sinon';
 
-import { createLoader } from '../src';
+import { createLoader, fixedWait } from '../src';
 
 chai.use(sinonChai);
 chai.use(chaiAsPromised);
@@ -62,6 +62,13 @@ describe('test createLoader: action matcher', () => {
       payload: {
       },
     })).to.be.equal(true);
+  });
+
+  it('Descriptor should has default options', () => {
+    const descriptor = createLoader(requestAction, loader);
+    expect(descriptor.options.ttl).to.equal(10000);
+    expect(descriptor.options.retryTimes).to.equal(1);
+    expect(descriptor.options.retryWait.next().value).to.equal(0);
   });
 });
 
@@ -146,6 +153,7 @@ describe('test createLoader: DataLoderTask', () => {
         userId: 25,
       },
     }).execute();
+
     return expect(promise.then(() => {
       expect(shouldFetchSpy).to.have.been.calledOnce;
       expect(loadingSpy).to.have.not.been.called;
@@ -181,6 +189,7 @@ describe('test createLoader: DataLoderTask', () => {
         userId: 25,
       },
     }).execute();
+
     return expect(promise.then(() => {
       expect(loadingSpy).to.have.been.calledOnce;
       expect(shouldFetchSpy).to.have.been.calledOnce;

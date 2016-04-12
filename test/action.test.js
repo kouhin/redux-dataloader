@@ -14,7 +14,7 @@ describe('test actions', () => {
   it('test loadRequest', () => {
     const expected = {
       type: action.LOAD_DATA_REQUEST_ACTION,
-      payload: {
+      meta: {
         action: requestAction,
       },
     };
