@@ -25,10 +25,8 @@ class DataLoaderTask {
 
     this.context = {
       ...context,
-      monitoredAction,
+      action: monitoredAction,
     };
-
-    this.action = monitoredAction;
 
     this.params = {
       success({ action }) {
@@ -64,7 +62,7 @@ class DataLoaderTask {
       if (debug.enabled) {
         debug('shouldFetch() returns false');
       }
-      const successAction = loadSuccess(this.action);
+      const successAction = loadSuccess(this.context.action);
       this.context.dispatch(successAction); // load nothing
       if (debug.enabled) {
         debug('A success action is dispatched for shouldFetch() = false', successAction);
@@ -110,33 +108,33 @@ class DataLoaderTask {
       const successAction = this.params.success(this.context, result);
 
       // Check successAction
-      if (successAction.type === this.action.type) {
+      if (successAction.type === this.context.action.type) {
         const errorAction = this.params.error(
           this.context,
-          new Error('Result action type equals origial action type', this.action)
+          new Error('Result action type equals origial action type', this.context.action)
         );
         this.context.dispatch(errorAction);
-        this.context.dispatch(loadFailure(this.action, error));
+        this.context.dispatch(loadFailure(this.context.action, error));
         return errorAction;
       }
 
       debug('Dispatch a success action', successAction);
       this.context.dispatch(successAction);
-      this.context.dispatch(loadSuccess(this.action, result));
+      this.context.dispatch(loadSuccess(this.context.action, result));
       return successAction;
     }
 
     const errorAction = this.params.error(this.context, error);
 
     // Check errorAction
-    if (errorAction.type === this.action.type) {
+    if (errorAction.type === this.context.action.type) {
       this.context.dispatch(errorAction);
-      this.context.dispatch(loadFailure(this.action, error));
+      this.context.dispatch(loadFailure(this.context.action, error));
       return errorAction;
     }
     debug('Dispatch an error action', errorAction);
     this.context.dispatch(errorAction);
-    this.context.dispatch(loadFailure(this.action, error));
+    this.context.dispatch(loadFailure(this.context.action, error));
     return errorAction;
   }
 
