@@ -65,6 +65,7 @@
     "webpack": "^1.12.15"
   },
   "dependencies": {
+    "babel-polyfill": "^6.7.4",
     "debug": "^2.2.0",
     "lodash": "^4.10.0"
   },
