@@ -1,58 +1,59 @@
-import * as action from '../src/action'
-import chai from 'chai'
-import { describe, it } from 'mocha'
+import { expect } from 'chai';
+import { describe, it } from 'mocha';
+
+import * as action from '../src/action';
 
 describe('test actions', () => {
   const requestAction = {
     type: 'LOAD_USER_REQUEST',
     payload: {
-      userId: 12
-    }
-  }
+      userId: 12,
+    },
+  };
 
   it('test loadRequest', () => {
-    const expect = {
+    const expected = {
       type: action.LOAD_DATA_REQUEST_ACTION,
-      payload: {
-        action: requestAction
-      }
-    }
-    const actual = action.loadRequest(requestAction)
-    chai.assert.deepEqual(actual, expect)
-  })
+      meta: {
+        action: requestAction,
+      },
+    };
+    const actual = action.loadRequest(requestAction);
+    expect(actual).to.deep.equal(expected);
+  });
 
   it('test loadSuccess', () => {
     const result = {
       userId: 12,
       username: 'tom',
-      age: 25
-    }
-    const expect = {
+      age: 25,
+    };
+    const expected = {
       type: action.LOAD_DATA_SUCCESS_ACTION,
       payload: {
-        data: result
+        data: result,
       },
       meta: {
-        action: requestAction
-      }
-    }
-    const actual = action.loadSuccess(requestAction, result)
-    chai.assert.deepEqual(actual, expect)
-  })
+        action: requestAction,
+      },
+    };
+    const actual = action.loadSuccess(requestAction, result);
+    expect(actual).to.deep.equal(expected);
+  });
 
   it('test loadFailure', () => {
-    const err = new Error('Not Found')
-    const expect = {
+    const err = new Error('Not Found');
+    const expected = {
       type: action.LOAD_DATA_FAILURE_ACTION,
       payload: {
-        error: err
+        error: err,
       },
       meta: {
-        action: requestAction
+        action: requestAction,
       },
-      error: true
-    }
-    const actual = action.loadFailure(requestAction, err)
-    chai.assert.deepEqual(actual, expect)
-  })
-})
+      error: true,
+    };
+    const actual = action.loadFailure(requestAction, err);
+    expect(actual).to.deep.equal(expected);
+  });
+});
