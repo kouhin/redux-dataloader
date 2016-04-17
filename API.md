@@ -21,7 +21,9 @@ const exampleLoader = createLoader('ACTION_TYPE_REQUEST',{
     // ...
   }
 }, {
-  ttl: 10000
+  ttl: 10000,
+  retryTimes: 3,
+  retryWait: fixedWait(500),
 })
 ```
 
@@ -106,7 +108,9 @@ You can use `createDataLoaderMiddleware(loaders, args)` to add extra objects to 
 
 `options` provides following optional values:
 
-1. `ttl`: Provides a value in millisecond to cache the loader in order to prevent duplicated requests. (_default: 10000_)   
+1. `ttl`: Provides a value in millisecond to cache the loader in order to prevent duplicated requests. (_default: 10000_)
+2. `retryTimes`: Total try times when fetching failed. (_default: 1_)
+3. `retryWait`: Wait stategy that sleeps before retrying: (_default: fixedWait(0)_), see [wait-strategies.js](/src/wait-strategies.js) for detail.
 
 ---
 

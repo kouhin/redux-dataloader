@@ -5,8 +5,7 @@
  */
 
 /**
- *
- * @param {} sleepTime
+ * Returns a wait strategy that sleeps a fixed amount of time before retrying (in millisecond).
  */
 export function * fixedWait(sleepTime) {
   for (;;) {

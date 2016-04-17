@@ -22,27 +22,27 @@ npm install redux-dataloader --save
 
 #### `userActions.js`
 ```javascript
-import { load } from 'redux-dataloader'
+import { load } from 'redux-dataloader';
 
-export const FETCH_USER_REQUEST = 'myapp/user/FETCH_USER/REQUEST'
-export const FETCH_USER_SUCCESS = 'myapp/user/FETCH_USER/SUCCESS'
-export const FETCH_USER_FAILURE = 'myapp/user/FETCH_USER/FAILURE'
+export const FETCH_USER_REQUEST = 'myapp/user/FETCH_USER/REQUEST';
+export const FETCH_USER_SUCCESS = 'myapp/user/FETCH_USER/SUCCESS';
+export const FETCH_USER_FAILURE = 'myapp/user/FETCH_USER/FAILURE';
 
-export function fetchUserRequest (userId) {
+export function fetchUserRequest(userId) {
   // use `load` to wrap a request action, load() returns a Promise
   return load({
     type: FETCH_USER_REQUEST,
     payload: {
       userId,
-    }
+    },
   })
 }
 
-export function fetchUserSuccess (userId, data) {
+export function fetchUserSuccess(userId, data) {
   // ...
 }
 
-export function fetchUserFailure (userId, error) {
+export function fetchUserFailure(userId, error) {
   // ...
 }
 
@@ -53,26 +53,26 @@ export function fetchUserFailure (userId, error) {
 #### `dataloaders.js`
 
 ```javascript
-import { createLoader } from 'redux-dataloader'
+import { createLoader, fixedWait } from 'redux-dataloader';
 
-import * as userActions from './userActions'
+import * as userActions from './userActions';
 
-const userLoader = createLoader (userActions.FETCH_USER_REQUEST, {
+const userLoader = createLoader(userActions.FETCH_USER_REQUEST, {
   /*
    * (required) Handle fetched data, return a success action
    */
   success: (context, result) => {
     // you can get original request action from context
-    const action = context.action
-    const userId = action.payload.userId
-    return userActions.fetchUserSuccess(userId, result)
+    const action = context.action;
+    const userId = action.payload.userId;
+    return userActions.fetchUserSuccess(userId, result);
   },
   /*
    * (required) Handle error, return a failure action
    */
   error: (context, error) => {
-    const action = context.action
-    const userId = action.payload.userId
+    const action = context.action;
+    const userId = action.payload.userId;
     return userActions.fetchUserFailure(userId, error);
   },
   /*
@@ -84,26 +84,30 @@ const userLoader = createLoader (userActions.FETCH_USER_REQUEST, {
    * We use yahoo/fetchr as an example.
    */
   fetch: (context) => {
-    const action = context.action
-    const userId = action.payload.userId
+    const action = context.action;
+    const userId = action.payload.userId;
 
-    const fetchr = context.fetchr
+    const fetchr = context.fetchr;
     return fetchr.read('userService')
       .params({
-        userId
-      }).end()
+        userId,
+      }).end();
   },
   /*
    * (optional) !!! Different from alt API.
    * When shouldFetch returns false, it will prevent fetching data.
    */
   shouldFetch: (context) => {
-    const action = context.action
-    const userId = action.payload.userId
-    const getState = context.getState
-    return !getState().user.users[userId]
+    const action = context.action;
+    const userId = action.payload.userId;
+    const getState = context.getState;
+    return !getState().user.users[userId];
   }
-})
+}, {
+  ttl: 10000,
+  retryTimes: 3,
+  retryWait: fixedWait(500),
+});
 
 export default [userLoader];
 ```
@@ -113,18 +117,18 @@ export default [userLoader];
 #### `configureStore.js`
 
 ```javascript
-import { createStore, applyMiddleware } from 'redux'
-import { createDataLoaderMiddleware } from `redux-dataloader`
-import { Fetchr } from 'fetchr'
-import reducer from './reducers'
-import loaders from './dataloaders'
+import { createStore, applyMiddleware } from 'redux';
+import { createDataLoaderMiddleware } from `redux-dataloader`;
+import { Fetchr } from 'fetchr';
+import reducer from './reducers';
+import loaders from './dataloaders';
 
 const fetcher = new Fetcher({
   xhrPath: '/api',
 });
 
 // create middleware, you can add extra arguments to data loader context
-const dataLoaderMiddleware = createDataLoaderMiddleware(loaders, { fetchr })
+const dataLoaderMiddleware = createDataLoaderMiddleware(loaders, { fetchr });
 
 const store = createStore(
   reducer,
@@ -140,30 +144,30 @@ Then, just use it in your application.
 The following is an example that combined with [redial](https://github.com/markdalgleish/redial) for isomorphic use.
 
 ```javascript
-import { provideHooks } from 'redial'
-import { fetchUserRequest } from 'userActions'
-import { fetchArticleRequest } from 'articleAction'
-import { fetchArticleSkinRequest } from 'articleSkinAction'
-import { getUserByUsername } from 'userReducer'
-import { getArticle } from 'articleReducer'
-import { getArticleSkin } from 'articleSkinReducer'
+import { provideHooks } from 'redial';
+import { fetchUserRequest } from 'userActions';
+import { fetchArticleRequest } from 'articleAction';
+import { fetchArticleSkinRequest } from 'articleSkinAction';
+import { getUserByUsername } from 'userReducer';
+import { getArticle } from 'articleReducer';
+import { getArticleSkin } from 'articleSkinReducer';
 
 // the router location is: /:username/:articleId
 // Data dependency: user <= article <= articleSkin
 async function fetchData({param, dispatch, getState}) {
   try {
     // 1. Fetch user
-    const username = params.username
-    await dispatch(fetchUserRequest(username)) // wait for response
+    const username = params.username;
+    await dispatch(fetchUserRequest(username)); // wait for response
 
     // 2. Fetch article by userId and articleId, you may use useId for authentication
-    const user = getUserByUsername(username)
-    const articleId = params.articleId
-    await dispatch(fetchArticleRequest(user.id, articleId))
+    const user = getUserByUsername(username);
+    const articleId = params.articleId;
+    await dispatch(fetchArticleRequest(user.id, articleId));
 
     // 3. Fetch article skin by articleId
-    const article = getArticle(articleId)
-    await dispatch(fetchArticleSkinRequest(article.skinId))
+    const article = getArticle(articleId);
+    await dispatch(fetchArticleSkinRequest(article.skinId));
   } catch (err) {
     // ...
   }
@@ -175,7 +179,7 @@ function mapStateToProps(state, owndProps) {
 
 @connect(mapStateToProps)
 @provideHooks({
-  fetch: fetchData
+  fetch: fetchData,
 })
 export default class ArticleContainer extends React.Component {
   // ...
@@ -188,17 +192,17 @@ You can also write `fetchData()` with Promise:
 function fetchData({param, dispatch, getState}) {
   return Promise.resolve().then(() => {
     // 1. Fetch user
-    const username = params.username
-    return dispatch(fetchUserRequest(username))
+    const username = params.username;
+    return dispatch(fetchUserRequest(username));
   }).then(() => {
     // 2. Fetch article by userId and articleId, you may use useId for authentication
-    const user = getUserByUsername(username) // get User from state
-    const articleId = params.articleId
-    return dispatch(fetchArticleRequest(user.id, articleId))
+    const user = getUserByUsername(username); // get User from state
+    const articleId = params.articleId;
+    return dispatch(fetchArticleRequest(user.id, articleId));
   }).then(() => {
     // 3. Fetch article skin by articleId
-    const article = getArticle(articleId) // get Article from state
-    return dispatch(fetchArticleSkinRequest(article.skinId))
+    const article = getArticle(articleId); // get Article from state
+    return dispatch(fetchArticleSkinRequest(article.skinId));
   }).catch((err) => {
     // error handler
     // ...
