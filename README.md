@@ -28,21 +28,21 @@ export const FETCH_USER_REQUEST = 'myapp/user/FETCH_USER/REQUEST';
 export const FETCH_USER_SUCCESS = 'myapp/user/FETCH_USER/SUCCESS';
 export const FETCH_USER_FAILURE = 'myapp/user/FETCH_USER/FAILURE';
 
-export function fetchUserRequest(userId) {
+export function fetchUserRequest(username) {
   // use `load` to wrap a request action, load() returns a Promise
   return load({
     type: FETCH_USER_REQUEST,
     payload: {
-      userId,
+      username: username,
     },
   })
 }
 
-export function fetchUserSuccess(userId, data) {
+export function fetchUserSuccess(username, data) {
   // ...
 }
 
-export function fetchUserFailure(userId, error) {
+export function fetchUserFailure(username, error) {
   // ...
 }
 
@@ -64,16 +64,16 @@ const userLoader = createLoader(userActions.FETCH_USER_REQUEST, {
   success: (context, result) => {
     // you can get original request action from context
     const action = context.action;
-    const userId = action.payload.userId;
-    return userActions.fetchUserSuccess(userId, result);
+    const username = action.payload.username;
+    return userActions.fetchUserSuccess(username, result);
   },
   /*
    * (required) Handle error, return a failure action
    */
   error: (context, error) => {
     const action = context.action;
-    const userId = action.payload.userId;
-    return userActions.fetchUserFailure(userId, error);
+    const username = action.payload.username;
+    return userActions.fetchUserFailure(username, error);
   },
   /*
    * (optional) By default, original request action will be dispatched. But you can still modify this process.
@@ -85,12 +85,12 @@ const userLoader = createLoader(userActions.FETCH_USER_REQUEST, {
    */
   fetch: (context) => {
     const action = context.action;
-    const userId = action.payload.userId;
+    const username = action.payload.username;
 
     const fetchr = context.fetchr;
     return fetchr.read('userService')
       .params({
-        userId,
+        username,
       }).end();
   },
   /*
@@ -99,9 +99,9 @@ const userLoader = createLoader(userActions.FETCH_USER_REQUEST, {
    */
   shouldFetch: (context) => {
     const action = context.action;
-    const userId = action.payload.userId;
+    const username = action.payload.username;
     const getState = context.getState;
-    return !getState().user.users[userId];
+    return !getState().user.users[username];
   }
 }, {
   ttl: 10000,
@@ -148,9 +148,6 @@ import { provideHooks } from 'redial';
 import { fetchUserRequest } from 'userActions';
 import { fetchArticleRequest } from 'articleAction';
 import { fetchArticleSkinRequest } from 'articleSkinAction';
-import { getUserByUsername } from 'userReducer';
-import { getArticle } from 'articleReducer';
-import { getArticleSkin } from 'articleSkinReducer';
 
 // the router location is: /:username/:articleId
 // Data dependency: user <= article <= articleSkin
@@ -161,12 +158,18 @@ async function fetchData({param, dispatch, getState}) {
     await dispatch(fetchUserRequest(username)); // wait for response
 
     // 2. Fetch article by userId and articleId, you may use useId for authentication
-    const user = getUserByUsername(username);
+    const user = getState().user.users[username];
+    if (!user) {
+      throw new Error(`user_not_found: ${username}`);
+    }
     const articleId = params.articleId;
     await dispatch(fetchArticleRequest(user.id, articleId));
 
     // 3. Fetch article skin by articleId
-    const article = getArticle(articleId);
+    const article = getState().article.articles[articleId];
+    if (!article) {
+      throw new Error(`article_not_found: ${articleId}`);
+    }
     await dispatch(fetchArticleSkinRequest(article.skinId));
   } catch (err) {
     // ...
@@ -196,12 +199,18 @@ function fetchData({param, dispatch, getState}) {
     return dispatch(fetchUserRequest(username));
   }).then(() => {
     // 2. Fetch article by userId and articleId, you may use useId for authentication
-    const user = getUserByUsername(username); // get User from state
+    const user = getState().user.users[username];
+    if (!user) {
+      throw new Error(`user_not_found: ${username}`);
+    }
     const articleId = params.articleId;
     return dispatch(fetchArticleRequest(user.id, articleId));
   }).then(() => {
     // 3. Fetch article skin by articleId
-    const article = getArticle(articleId); // get Article from state
+    const article = getState().article.articles[articleId];
+    if (!article) {
+      throw new Error(`article_not_found: ${articleId}`);
+    }
     return dispatch(fetchArticleSkinRequest(article.skinId));
   }).catch((err) => {
     // error handler
