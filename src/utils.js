@@ -7,3 +7,13 @@ export function isAction(action) {
         action.type && (typeof action.type) === 'string';
   return result;
 }
+
+export function formatError(err) {
+  const error = (err instanceof Error) ? err : JSON.stringify(err);
+  const result = {
+    message: error.message,
+    name: error.name,
+    stack: err.stack,
+  };
+  return result;
+}

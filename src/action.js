@@ -1,3 +1,5 @@
+import { formatError } from './utils';
+
 export const LOAD_DATA_REQUEST_ACTION = '@redux-dataloader/REQUEST';
 export const LOAD_DATA_SUCCESS_ACTION = '@redux-dataloader/SUCCESS';
 export const LOAD_DATA_FAILURE_ACTION = '@redux-dataloader/FAILURE';
@@ -6,7 +8,7 @@ export function loadFailure(action, error) {
   return {
     type: LOAD_DATA_FAILURE_ACTION,
     payload: {
-      error,
+      error: formatError(error),
     },
     meta: {
       action,
