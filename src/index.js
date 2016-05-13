@@ -8,7 +8,7 @@ export { default as load } from './load';
 
 export { default as createLoader } from './data-loader';
 
-export { default as createDataLoaderMiddleware } from './create-data-loader-middleware';
+export { default as createDataLoaderMiddleware } from './middleware';
 
 export {
   fixedWait,

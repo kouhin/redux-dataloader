@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
+import { formatError } from '../src/utils';
 
 import * as action from '../src/action';
 
@@ -46,7 +47,7 @@ describe('test actions', () => {
     const expected = {
       type: action.LOAD_DATA_FAILURE_ACTION,
       payload: {
-        error: err,
+        error: formatError(err),
       },
       meta: {
         action: requestAction,
