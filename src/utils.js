@@ -9,11 +9,12 @@ export function isAction(action) {
 }
 
 export function formatError(err) {
-  const error = (err instanceof Error) ? err : JSON.stringify(err);
-  const result = {
-    message: error.message,
-    name: error.name,
-    stack: err.stack,
-  };
-  return result;
+  if (err instanceof Error) {
+    return {
+      message: err.message,
+      name: err.name,
+      stack: err.stack,
+    };
+  }
+  return err;
 }
