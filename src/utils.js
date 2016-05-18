@@ -9,12 +9,10 @@ export function isAction(action) {
 }
 
 export function formatError(err) {
-  if (err instanceof Error) {
-    return {
-      message: err.message,
-      name: err.name,
-      stack: err.stack,
-    };
-  }
-  return err;
+  const error = (err instanceof Error) ? err : new Error(err);
+  const result = {};
+  Object.getOwnPropertyNames(error).forEach(key => {
+    result[key] = error[key];
+  });
+  return result;
 }
