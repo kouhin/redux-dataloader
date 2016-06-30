@@ -54,6 +54,8 @@ class DataLoaderTask {
       ...options,
     };
 
+    const disableInternalAction = !!options.disableInternalAction;
+
     if (debug.enabled) {
       debug('Excute with options', opts);
     }
@@ -62,10 +64,12 @@ class DataLoaderTask {
       if (debug.enabled) {
         debug('shouldFetch() returns false');
       }
-      const successAction = loadSuccess(this.context.action);
-      this.context.dispatch(successAction); // load nothing
-      if (debug.enabled) {
-        debug('A success action is dispatched for shouldFetch() = false', successAction);
+      if (!disableInternalAction) {
+        const successAction = loadSuccess(this.context.action);
+        this.context.dispatch(successAction); // load nothing
+        if (debug.enabled) {
+          debug('A success action is dispatched for shouldFetch() = false', successAction);
+        }
       }
       return null;
     }
@@ -114,13 +118,17 @@ class DataLoaderTask {
           new Error('Result action type equals origial action type', this.context.action)
         );
         this.context.dispatch(errorAction);
-        this.context.dispatch(loadFailure(this.context.action, error));
+        if (!disableInternalAction) {
+          this.context.dispatch(loadFailure(this.context.action, error));
+        }
         return errorAction;
       }
 
       debug('Dispatch a success action', successAction);
       this.context.dispatch(successAction);
-      this.context.dispatch(loadSuccess(this.context.action, result));
+      if (!disableInternalAction) {
+        this.context.dispatch(loadSuccess(this.context.action, result));
+      }
       return successAction;
     }
 
@@ -129,12 +137,16 @@ class DataLoaderTask {
     // Check errorAction
     if (errorAction.type === this.context.action.type) {
       this.context.dispatch(errorAction);
-      this.context.dispatch(loadFailure(this.context.action, error));
+      if (!disableInternalAction) {
+        this.context.dispatch(loadFailure(this.context.action, error));
+      }
       return errorAction;
     }
     debug('Dispatch an error action', errorAction);
     this.context.dispatch(errorAction);
-    this.context.dispatch(loadFailure(this.context.action, error));
+    if (!disableInternalAction) {
+      this.context.dispatch(loadFailure(this.context.action, error));
+    }
     return errorAction;
   }
 

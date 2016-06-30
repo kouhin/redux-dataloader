@@ -12,7 +12,7 @@ function findRunningTaskKey(runningTasksMap, action) {
   return findKey(runningTasksMap, (o) => isEqual(o.action, action));
 }
 
-export default function createDataLoaderMiddleware(loaders, args) {
+export default function createDataLoaderMiddleware(loaders, args, opts) {
   const runningTasks = {};
 
   let currentId = 1;
@@ -55,6 +55,7 @@ export default function createDataLoaderMiddleware(loaders, args) {
         }
 
         const options = {
+          ...opts,
           ...taskDescriptor.options,
           ...(asyncAction.meta.options || {}),
         };
