@@ -1,6 +1,7 @@
 import findKey from 'lodash/findKey';
 import find from 'lodash/find';
 import isEqual from 'lodash/isEqual';
+import isInteger from 'lodash/isInteger';
 import Debug from 'debug';
 
 import { isPromise } from './utils';
@@ -69,13 +70,13 @@ export default function createDataLoaderMiddleware(loaders, args, opts) {
         debug('Generate new cache key', key);
         debug('Start executing');
         const runningTask = taskDescriptor.newTask(ctx, action).execute(options);
-        runningTasks[key] = {
-          action,
-          promise: runningTask,
-        };
 
-        debug(`Set cache ttl for task[${key}], ttl = ${options.ttl}`);
-        if (options.ttl) {
+        if (isInteger(options.ttl) && options.ttl > 0) {
+          runningTasks[key] = {
+            action,
+            promise: runningTask,
+          };
+          debug(`Set cache ttl for task[${key}], ttl = ${options.ttl}`);
           setTimeout(() => {
             debug(`Task[${key}] is removed from cache, for ttl = ${options.ttl} ms`);
             delete runningTasks[key];
