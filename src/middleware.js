@@ -76,11 +76,13 @@ export default function createDataLoaderMiddleware(loaders, args, opts) {
             action,
             promise: runningTask,
           };
-          debug(`Set cache ttl for task[${key}], ttl = ${options.ttl}`);
-          setTimeout(() => {
-            debug(`Task[${key}] is removed from cache, for ttl = ${options.ttl} ms`);
-            delete runningTasks[key];
-          }, options.ttl);
+          if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+            debug(`Set cache ttl for task[${key}], ttl = ${options.ttl}`);
+            setTimeout(() => {
+              debug(`Task[${key}] is removed from cache, for ttl = ${options.ttl} ms`);
+              delete runningTasks[key];
+            }, options.ttl);
+          }
         }
         return runningTask;
       });
