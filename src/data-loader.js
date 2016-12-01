@@ -95,17 +95,17 @@ class DataLoaderTask {
         break;
       } catch (ex) {
         debug('Fetching failed, ex = ', ex);
-        currentRetry++;
+        currentRetry += 1;
         if (options.retryTimes && currentRetry < opts.retryTimes) {
           const sleepTime = opts.retryWait.next().value;
           if (debug.enabled) {
             debug(`Sleeping for ${sleepTime} ms..., and retry`);
           }
           await sleep(sleepTime);
-          continue;
+        } else {
+          error = ex;
+          break;
         }
-        error = ex;
-        break;
       }
     }
     if (!error) {
@@ -115,7 +115,7 @@ class DataLoaderTask {
       if (successAction.type === this.context.action.type) {
         const errorAction = this.params.error(
           this.context,
-          new Error('Result action type equals origial action type', this.context.action)
+          new Error('Result action type equals origial action type', this.context.action),
         );
         this.context.dispatch(errorAction);
         if (!disableInternalAction) {

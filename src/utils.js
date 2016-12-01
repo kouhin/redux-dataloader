@@ -11,7 +11,7 @@ export function isAction(action) {
 export function formatError(err) {
   const error = (err instanceof Error) ? err : new Error(err);
   const result = {};
-  Object.getOwnPropertyNames(error).forEach(key => {
+  Object.getOwnPropertyNames(error).forEach((key) => {
     result[key] = error[key];
   });
   return result;
