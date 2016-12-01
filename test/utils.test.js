@@ -11,7 +11,7 @@ describe('utils', () => {
     });
 
     it('new Promise() is a Promise', () => {
-      expect(isPromise(new Promise((resolve) => resolve(false)))).to.be.true;
+      expect(isPromise(new Promise(resolve => resolve(false)))).to.be.true;
     });
     it('Function is not a Promise', () => {
       expect(isPromise(() => true)).to.not.be.true;

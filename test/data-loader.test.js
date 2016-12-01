@@ -47,7 +47,7 @@ describe('test createLoader: action matcher', () => {
   });
 
   it('create a data loader that uses function to match', () => {
-    const descriptor = createLoader((action) =>
+    const descriptor = createLoader(action =>
       (action.payload && action.type && action.type === 'USER_REQUEST'), loader);
     expect(descriptor.supports(requestAction)).to.be.equal(true);
     expect(descriptor.supports('USER_REQUEST')).to.not.be.equal(true);

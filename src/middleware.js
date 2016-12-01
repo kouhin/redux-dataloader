@@ -10,14 +10,15 @@ import { LOAD_DATA_REQUEST_ACTION } from './action';
 const debug = new Debug('redux-dataloader:middleware');
 
 function findRunningTaskKey(runningTasksMap, action) {
-  return findKey(runningTasksMap, (o) => isEqual(o.action, action));
+  return findKey(runningTasksMap, o => isEqual(o.action, action));
 }
 
 export default function createDataLoaderMiddleware(loaders, args, opts) {
   const runningTasks = {};
 
   let currentId = 1;
-  const uniqueId = (prefix) => `${prefix}${currentId++}`;
+  currentId += 1;
+  const uniqueId = prefix => `${prefix}${currentId}`;
 
   const middleware = ({ dispatch, getState }) => {
     const ctx = {
@@ -26,7 +27,7 @@ export default function createDataLoaderMiddleware(loaders, args, opts) {
       getState,
     };
 
-    return (next) => (receivedAction) => {
+    return next => (receivedAction) => {
       if (!isPromise(receivedAction)) {
         return next(receivedAction);
       }
@@ -48,7 +49,7 @@ export default function createDataLoaderMiddleware(loaders, args, opts) {
           return runningTasks[runningTaskKey].promise;
         }
 
-        const taskDescriptor = find(loaders, (loader) => loader.supports(action));
+        const taskDescriptor = find(loaders, loader => loader.supports(action));
         debug('Cache does not hit, finding task descriptor', taskDescriptor);
 
         if (!taskDescriptor) {
@@ -63,7 +64,7 @@ export default function createDataLoaderMiddleware(loaders, args, opts) {
         debug(
           'Merge options from taskDescriptor and dispatched action',
           taskDescriptor.options,
-          asyncAction.meta.options, options
+          asyncAction.meta.options, options,
         );
 
         const key = uniqueId(`${action.type}__`);

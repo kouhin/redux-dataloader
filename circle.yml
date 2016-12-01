@@ -1,0 +1,19 @@
+machine:
+  node:
+    version: 7
+dependencies:
+  override:
+    - sudo apt-get install jq
+    - npm install
+    - npm run build
+test:
+  override:
+    - npm test
+deployment:
+  production:
+    branch: master
+    commands:
+      - git tag v`jq -r '.version' package.json`
+      - git push origin --tags
+      - echo -e "$NPM_USERNAME\n$NPM_PASSWORD\n$NPM_EMAIL" | npm login
+      - npm publish
