@@ -2,25 +2,9 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 
-import { isPromise, isAction } from '../src/utils';
+import { isAction } from '../src/utils';
 
 describe('utils', () => {
-  describe('isPromise()', () => {
-    it('Promise.resolve() is a Promise', () => {
-      expect(isPromise(Promise.resolve())).to.be.true;
-    });
-
-    it('new Promise() is a Promise', () => {
-      expect(isPromise(new Promise(resolve => resolve(false)))).to.be.true;
-    });
-    it('Function is not a Promise', () => {
-      expect(isPromise(() => true)).to.not.be.true;
-    });
-    it('Object is not a Promise', () => {
-      expect(isPromise({})).to.not.be.true;
-    });
-  });
-
   describe('isAction()', () => {
     it('Object is an action', () => {
       expect(isAction({
