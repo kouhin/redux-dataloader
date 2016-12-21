@@ -11,7 +11,7 @@ describe('load()', () => {
     },
   };
 
-  it('wrap an action, should return promise', () => {
+  it('wrap an action, should return promise', (done) => {
     const promise = load(requestAction);
     const expected = {
       type: LOAD_DATA_REQUEST_ACTION,
@@ -19,7 +19,10 @@ describe('load()', () => {
         action: requestAction,
       },
     };
-    return expect(promise).to.eventually.deep.equal(expected);
+    promise.then((result) => {
+      expect(result).to.be.deep.equal(expected);
+      done();
+    }, done);
   });
 
   it('pass a non-object to load(), should throw an Error', () => {

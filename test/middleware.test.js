@@ -1,12 +1,7 @@
-import chai, { expect } from 'chai';
-import sinonChai from 'sinon-chai';
-import chaiAsPromised from 'chai-as-promised';
+import { expect } from 'chai';
 import { describe, it } from 'mocha';
 
 import { createLoader, createDataLoaderMiddleware } from '../src';
-
-chai.use(sinonChai);
-chai.use(chaiAsPromised);
 
 describe('createDataLoaderMiddleware()', () => {
   const loaderObj = {

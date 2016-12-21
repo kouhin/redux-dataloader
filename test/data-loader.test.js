@@ -1,14 +1,9 @@
 /* eslint-disable no-unused-expressions */
-import chai, { expect } from 'chai';
-import sinonChai from 'sinon-chai';
-import chaiAsPromised from 'chai-as-promised';
+import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import sinon from 'sinon';
 
 import { createLoader } from '../src';
-
-chai.use(sinonChai);
-chai.use(chaiAsPromised);
 
 describe('test createLoader: action matcher', () => {
   const loader = {
@@ -47,7 +42,7 @@ describe('test createLoader: action matcher', () => {
   });
 
   it('create a data loader that uses function to match', () => {
-    const descriptor = createLoader((action) =>
+    const descriptor = createLoader(action =>
       (action.payload && action.type && action.type === 'USER_REQUEST'), loader);
     expect(descriptor.supports(requestAction)).to.be.equal(true);
     expect(descriptor.supports('USER_REQUEST')).to.not.be.equal(true);
@@ -117,14 +112,16 @@ describe('test createLoader: DataLoderTask', () => {
       },
     }).execute();
 
-    return expect(promise.then(() => {
-      expect(loadingSpy).to.have.been.calledOnce;
-      expect(shouldFetchSpy).to.have.been.calledOnce;
-      expect(fetchSpy).to.have.been.calledOnce;
-      expect(successSpy).to.have.been.calledOnce;
-      expect(errorSpy).to.have.not.been.called;
+    promise.then(() => {
+      expect(loadingSpy.calledOnce).to.be.true;
+      expect(shouldFetchSpy.calledOnce).to.be.true;
+      expect(shouldFetchSpy.calledOnce).to.be.true;
+      expect(fetchSpy.calledOnce).to.be.true;
+      expect(successSpy.calledOnce).to.be.true;
+      expect(errorSpy.notCalled).to.be.true;
       sinon.assert.callOrder(shouldFetchSpy, fetchSpy, successSpy);
-    })).to.be.fulfilled.notify(done);
+      done();
+    }, done);
   });
 
   it('loading -> shouldFetch(return false) -> noop', (done) => {
@@ -154,13 +151,14 @@ describe('test createLoader: DataLoderTask', () => {
       },
     }).execute();
 
-    return expect(promise.then(() => {
-      expect(shouldFetchSpy).to.have.been.calledOnce;
-      expect(loadingSpy).to.have.not.been.called;
-      expect(fetchSpy).to.have.not.been.calledOnce;
-      expect(successSpy).to.have.not.been.called;
-      expect(errorSpy).to.have.not.been.called;
-    })).to.be.fulfilled.notify(done);
+    promise.then(() => {
+      expect(shouldFetchSpy.calledOnce).to.be.true;
+      expect(loadingSpy.notCalled).to.be.true;
+      expect(fetchSpy.notCalled).to.be.true;
+      expect(successSpy.notCalled).to.be.true;
+      expect(errorSpy.notCalled).to.be.true;
+      done();
+    }, done);
   });
 
   it('loading -> shouldFetch -> fetch -> error', (done) => {
@@ -190,14 +188,15 @@ describe('test createLoader: DataLoderTask', () => {
       },
     }).execute();
 
-    return expect(promise.then(() => {
-      expect(loadingSpy).to.have.been.calledOnce;
-      expect(shouldFetchSpy).to.have.been.calledOnce;
-      expect(fetchSpy).to.have.been.calledOnce;
-      expect(successSpy).to.have.not.been.called;
-      expect(errorSpy).to.have.been.calledOnce;
+    promise.then(() => {
+      expect(loadingSpy.calledOnce).to.be.true;
+      expect(shouldFetchSpy.calledOnce).to.be.true;
+      expect(fetchSpy.calledOnce).to.be.true;
+      expect(successSpy.notCalled).to.be.true;
+      expect(errorSpy.calledOnce).to.be.true;
       sinon.assert.callOrder(shouldFetchSpy, fetchSpy, errorSpy);
-    })).to.be.fulfilled.notify(done);
+      done();
+    }, done);
   });
 });
 /* eslint-enable no-unused-expressions */
