@@ -1,11 +1,8 @@
 import isEqual from 'lodash/isEqual';
-import Debug from 'debug';
 
 import { loadFailure, loadSuccess } from './action';
 import { isAction } from './utils';
 import { fixedWait } from './wait-strategies';
-
-const debug = new Debug('redux-dataloader:data-loader');
 
 const DEFAULT_OPTIONS = {
   ttl: 10000, // Default TTL: 10s
@@ -56,28 +53,15 @@ class DataLoaderTask {
 
     const disableInternalAction = !!options.disableInternalAction;
 
-    if (debug.enabled) {
-      debug('Excute with options', opts);
-    }
-
     if (!this.params.shouldFetch(this.context)) {
-      if (debug.enabled) {
-        debug('shouldFetch() returns false');
-      }
       if (!disableInternalAction) {
         const successAction = loadSuccess(this.context.action);
         this.context.dispatch(successAction); // load nothing
-        if (debug.enabled) {
-          debug('A success action is dispatched for shouldFetch() = false', successAction);
-        }
       }
       return null;
     }
     const loadingAction = this.params.loading(this.context);
     this.context.dispatch(loadingAction);
-    if (debug.enabled) {
-      debug('A loading action is dispatched', loadingAction);
-    }
 
     let currentRetry = 0;
     let result;
@@ -85,22 +69,12 @@ class DataLoaderTask {
 
     for (;;) {
       try {
-        if (debug.enabled) {
-          debug('Start fetching, try = ', (currentRetry + 1));
-        }
         result = await this.params.fetch(this.context);
-        if (debug.enabled) {
-          debug('Fetching success, result = ', result);
-        }
         break;
       } catch (ex) {
-        debug('Fetching failed, ex = ', ex);
         currentRetry += 1;
         if (options.retryTimes && currentRetry < opts.retryTimes) {
           const sleepTime = opts.retryWait.next().value;
-          if (debug.enabled) {
-            debug(`Sleeping for ${sleepTime} ms..., and retry`);
-          }
           await sleep(sleepTime);
         } else {
           error = ex;
@@ -108,6 +82,7 @@ class DataLoaderTask {
         }
       }
     }
+
     if (!error) {
       const successAction = this.params.success(this.context, result);
 
@@ -124,7 +99,6 @@ class DataLoaderTask {
         return errorAction;
       }
 
-      debug('Dispatch a success action', successAction);
       this.context.dispatch(successAction);
       if (!disableInternalAction) {
         this.context.dispatch(loadSuccess(this.context.action, result));
@@ -142,7 +116,6 @@ class DataLoaderTask {
       }
       return errorAction;
     }
-    debug('Dispatch an error action', errorAction);
     this.context.dispatch(errorAction);
     if (!disableInternalAction) {
       this.context.dispatch(loadFailure(this.context.action, error));
@@ -192,9 +165,6 @@ class DataLoaderTaskDescriptor {
  */
 function createLoader(pattern, params, options) {
   const dataLoaderDescriptor = new DataLoaderTaskDescriptor(pattern, params, options);
-  if (debug.enabled) {
-    debug('Create a new data loader descriptor', dataLoaderDescriptor);
-  }
   return dataLoaderDescriptor;
 }
 
