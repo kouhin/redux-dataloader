@@ -31,4 +31,3 @@ describe('utils', () => {
     });
   });
 });
-/* eslint-enable no-unused-expressions */
