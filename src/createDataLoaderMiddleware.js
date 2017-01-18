@@ -26,7 +26,7 @@ export default function createDataLoaderMiddleware(
   };
 
   const middleware = ({ dispatch, getState }) => {
-    middleware.cache = {};
+    middleware.runningTasks = {};
     const ctx = assign({}, withArgs, {
       dispatch,
       getState,
@@ -42,9 +42,9 @@ export default function createDataLoaderMiddleware(
         next(asyncAction);
 
         const { action } = asyncAction.meta;
-        const taskKey = findTaskKey(middleware.cache, action);
+        const taskKey = findTaskKey(middleware.runningTasks, action);
         if (taskKey) {
-          return middleware.cache[taskKey].promise;
+          return middleware.runningTasks[taskKey].promise;
         }
 
         const taskDescriptor = find(flattenedLoaders, loader => loader.supports(action));
@@ -73,10 +73,10 @@ export default function createDataLoaderMiddleware(
 
         if (isInteger(options.ttl) && options.ttl > 0) {
           const key = uniqueId(`${action.type}__`);
-          middleware.cache[key] = { action, promise: runningTask };
+          middleware.runningTasks[key] = { action, promise: runningTask };
           if (typeof window !== 'undefined' && typeof document !== 'undefined') {
             setTimeout(() => {
-              delete middleware.cache[key];
+              delete middleware.runningTasks[key];
             }, options.ttl);
           }
         }
