@@ -5,7 +5,14 @@ export function isAction(action) {
 }
 
 export function formatError(err) {
-  const error = (err instanceof Error) ? err : new Error(err);
+  let error;
+  if (err instanceof Error) {
+    error = err;
+  } else if (typeof err === 'object') {
+    error = new Error(JSON.stringify(err));
+  } else {
+    error = new Error(err);
+  }
   const result = {};
   Object.getOwnPropertyNames(error).forEach((key) => {
     result[key] = error[key];

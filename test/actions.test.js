@@ -2,9 +2,9 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { formatError } from '../src/utils';
 
-import * as action from '../src/action';
+import * as action from '../src/actions';
 
-describe('test actions', () => {
+describe('actions', () => {
   const requestAction = {
     type: 'LOAD_USER_REQUEST',
     payload: {

@@ -2,13 +2,13 @@ export {
   LOAD_DATA_REQUEST_ACTION,
   LOAD_DATA_SUCCESS_ACTION,
   LOAD_DATA_FAILURE_ACTION,
-} from './action';
+} from './actions';
 
 export { default as load } from './load';
 
-export { default as createLoader } from './data-loader';
+export { default as createLoader } from './createLoader';
 
-export { default as createDataLoaderMiddleware } from './middleware';
+export { default as createDataLoaderMiddleware } from './createDataLoaderMiddleware';
 
 export {
   fixedWait,
@@ -17,4 +17,4 @@ export {
   incrementingWait,
   noWait,
   randomWait,
-} from './wait-strategies';
+} from './waitStrategies';
