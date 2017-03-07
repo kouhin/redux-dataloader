@@ -215,7 +215,7 @@ describe('createDataLoaderMiddleware', () => {
         return store.dispatch(userActions.fetchUserRequest('tom'));
       })
       .then((result) => {
-        expect(result).to.be.equal(null);
+        expect(result).to.be.equal(undefined);
         return store.dispatch(userActions.fetchUserRequest('tom'));
       })
       .then(() => {
