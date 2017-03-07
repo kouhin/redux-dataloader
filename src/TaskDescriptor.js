@@ -1,5 +1,4 @@
 import isEqual from 'lodash/isEqual';
-import assign from 'lodash/assign';
 
 import Task from './Task';
 import { DEFAULT_OPTIONS } from './constants';
@@ -8,7 +7,7 @@ export default class TaskDescriptor {
   constructor(pattern, params, options = {}) {
     this.pattern = pattern;
     this.params = params;
-    this.options = assign({}, DEFAULT_OPTIONS, options);
+    this.options = Object.assign({}, DEFAULT_OPTIONS, options);
     if (this.options.retryTimes < 1) {
       this.options.retryTimes = 1;
     }

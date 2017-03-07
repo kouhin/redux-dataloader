@@ -48,19 +48,17 @@ describe('DataLoderTaskDescriptor', () => {
       payload: {
         userId: 25,
       },
-    }).execute({}, (err) => {
-      if (err) {
-        done(err);
-        return;
-      }
-      expect(loadingSpy).to.have.been.calledOnce;
-      expect(shouldFetchSpy).to.have.been.calledOnce;
-      expect(fetchSpy).to.have.been.calledOnce;
-      expect(successSpy).to.have.been.calledOnce;
-      expect(errorSpy).to.have.not.been.called;
-      sinon.assert.callOrder(shouldFetchSpy, fetchSpy, successSpy);
-      done();
-    }).catch(done);
+    })
+      .execute({})
+      .then(() => {
+        expect(loadingSpy).to.have.been.calledOnce;
+        expect(shouldFetchSpy).to.have.been.calledOnce;
+        expect(fetchSpy).to.have.been.calledOnce;
+        expect(successSpy).to.have.been.calledOnce;
+        expect(errorSpy).to.have.not.been.called;
+        sinon.assert.callOrder(shouldFetchSpy, fetchSpy, successSpy);
+        done();
+      }).catch(done);
   });
 
   it('loading -> shouldFetch(return false) -> noop', (done) => {
@@ -88,18 +86,17 @@ describe('DataLoderTaskDescriptor', () => {
       payload: {
         userId: 25,
       },
-    }).execute({}, (err, result) => {
-      if (err) {
-        done(err);
-        return;
-      }
-      expect(shouldFetchSpy).to.have.been.calledOnce;
-      expect(loadingSpy).to.have.not.been.called;
-      expect(fetchSpy).to.have.not.been.calledOnce;
-      expect(successSpy).to.have.not.been.called;
-      expect(errorSpy).to.have.not.been.called;
-      done(null, result);
-    });
+    })
+      .execute({})
+      .then((result) => {
+        expect(shouldFetchSpy).to.have.been.calledOnce;
+        expect(loadingSpy).to.have.not.been.called;
+        expect(fetchSpy).to.have.not.been.calledOnce;
+        expect(successSpy).to.have.not.been.called;
+        expect(errorSpy).to.have.not.been.called;
+        done(null, result);
+      })
+      .catch(done);
   });
 
   it('loading -> shouldFetch -> fetch -> error', (done) => {
@@ -127,18 +124,17 @@ describe('DataLoderTaskDescriptor', () => {
       payload: {
         userId: 25,
       },
-    }).execute({}, (err, result) => {
-      if (err) {
-        done(err);
-        return;
-      }
-      expect(loadingSpy).to.have.been.calledOnce;
-      expect(shouldFetchSpy).to.have.been.calledOnce;
-      expect(fetchSpy).to.have.been.calledOnce;
-      expect(successSpy).to.have.not.been.called;
-      expect(errorSpy).to.have.been.calledOnce;
-      sinon.assert.callOrder(shouldFetchSpy, fetchSpy, errorSpy);
-      done(null, result);
-    });
+    })
+      .execute({})
+      .then((result) => {
+        expect(loadingSpy).to.have.been.calledOnce;
+        expect(shouldFetchSpy).to.have.been.calledOnce;
+        expect(fetchSpy).to.have.been.calledOnce;
+        expect(successSpy).to.have.not.been.called;
+        expect(errorSpy).to.have.been.calledOnce;
+        sinon.assert.callOrder(shouldFetchSpy, fetchSpy, errorSpy);
+        done(null, result);
+      })
+      .catch(done);
   });
 });
