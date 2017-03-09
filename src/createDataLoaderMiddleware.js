@@ -1,10 +1,8 @@
 import findKey from 'lodash/findKey';
 import find from 'lodash/find';
 import isEqual from 'lodash/isEqual';
-import assign from 'lodash/assign';
 import flattenDeep from 'lodash/flattenDeep';
 import get from 'lodash/get';
-import isInteger from 'lodash/isInteger';
 
 import { REDUX_DATALOADER_ACTION_ID } from './constants';
 
@@ -27,10 +25,14 @@ export default function createDataLoaderMiddleware(
 
   const middleware = ({ dispatch, getState }) => {
     middleware.runningTasks = {};
-    const ctx = assign({}, withArgs, {
-      dispatch,
-      getState,
-    });
+    const ctx = Object.assign(
+      {},
+      withArgs,
+      {
+        dispatch,
+        getState,
+      },
+    );
 
     return next => (receivedAction) => {
       // eslint-disable-next-line no-underscore-dangle
@@ -53,7 +55,7 @@ export default function createDataLoaderMiddleware(
         }
 
         // Priority: Action Meta Options > TaskDescriptor Options > Middleware Options
-        const options = assign(
+        const options = Object.assign(
           {},
           middlewareOpts,
           taskDescriptor.options,
@@ -61,17 +63,9 @@ export default function createDataLoaderMiddleware(
         );
 
         const task = taskDescriptor.newTask(ctx, action);
-        const runningTask = new Promise((resolve, reject) => {
-          task.execute(options, (err, result) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(result);
-            }
-          });
-        });
+        const runningTask = task.execute(options);
 
-        if (isInteger(options.ttl) && options.ttl > 0) {
+        if (Number.isInteger(options.ttl) && options.ttl > 0) {
           const key = uniqueId(`${action.type}__`);
           middleware.runningTasks[key] = { action, promise: runningTask };
           if (typeof window !== 'undefined' && typeof document !== 'undefined') {
