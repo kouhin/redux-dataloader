@@ -1,5 +1,7 @@
 # Redux Data Loader
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/kouhin/redux-dataloader.svg)](https://greenkeeper.io/)
+
 [![Build Status](https://travis-ci.org/kouhin/redux-dataloader.svg?branch=master)](https://travis-ci.org/kouhin/redux-dataloader)
 [![npm](https://img.shields.io/npm/v/redux-dataloader.svg)](https://npmjs.org/package/redux-dataloader)
 
