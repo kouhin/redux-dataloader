@@ -68,7 +68,7 @@ export default function createDataLoaderMiddleware(
         if (Number.isInteger(options.ttl) && options.ttl > 0) {
           const key = uniqueId(`${action.type}__`);
           middleware.runningTasks[key] = { action, promise: runningTask };
-          if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+          if (typeof navigator !== 'undefined') {
             setTimeout(() => {
               delete middleware.runningTasks[key];
             }, options.ttl);
