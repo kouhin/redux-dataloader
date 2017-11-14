@@ -111,7 +111,7 @@ function reducer(state = initState, action) {
 }
 
 describe('createDataLoaderMiddleware', () => {
-  it('dispatch a request action with exist username, data should be stored successfully', (done) => {
+  it('dispatch a request action with exist username, data should be stored successfully', async () => {
     const dataLoaderMiddleware = createDataLoaderMiddleware([userLoader], {
       api: {
         read: findUserByUsername,
@@ -121,21 +121,17 @@ describe('createDataLoaderMiddleware', () => {
       reducer,
       applyMiddleware(dataLoaderMiddleware),
     );
-    store
-      .dispatch(userActions.fetchUserRequest('tom'))
-      .then(() => {
-        expect(store.getState()).to.be.deep.equal({
-          tom: {
-            age: 21,
-            givenName: 'Tom',
-            familyName: 'TomFamilyName',
-          },
-        });
-        done();
-      }).catch(done);
+    await store.dispatch(userActions.fetchUserRequest('tom'));
+    expect(store.getState()).to.be.deep.equal({
+      tom: {
+        age: 21,
+        givenName: 'Tom',
+        familyName: 'TomFamilyName',
+      },
+    });
   });
 
-  it('dispatch two request actions with exist username at the same time, data should be stored successfully', (done) => {
+  it('dispatch two request actions with exist username at the same time, data should be stored successfully', async () => {
     const dataLoaderMiddleware = createDataLoaderMiddleware([userLoader], {
       api: {
         read: findUserByUsername,
@@ -145,28 +141,25 @@ describe('createDataLoaderMiddleware', () => {
       reducer,
       applyMiddleware(dataLoaderMiddleware),
     );
-    Promise.all([
+    await Promise.all([
       store.dispatch(userActions.fetchUserRequest('tom')),
       store.dispatch(userActions.fetchUserRequest('bob')),
-    ])
-      .then(() => {
-        expect(store.getState()).to.be.deep.equal({
-          bob: {
-            age: 30,
-            givenName: 'Bob',
-            familyName: 'BobFamilyName',
-          },
-          tom: {
-            age: 21,
-            givenName: 'Tom',
-            familyName: 'TomFamilyName',
-          },
-        });
-        done();
-      }).catch(done);
+    ]);
+    expect(store.getState()).to.be.deep.equal({
+      bob: {
+        age: 30,
+        givenName: 'Bob',
+        familyName: 'BobFamilyName',
+      },
+      tom: {
+        age: 21,
+        givenName: 'Tom',
+        familyName: 'TomFamilyName',
+      },
+    });
   });
 
-  it('dispatch a request action and cause an error, data error action should be dispatched', (done) => {
+  it('dispatch a request action and cause an error, data error action should be dispatched', async () => {
     const dataLoaderMiddleware = createDataLoaderMiddleware([userLoader], {
       api: {
         read: findUserByUsername,
@@ -176,15 +169,11 @@ describe('createDataLoaderMiddleware', () => {
       reducer,
       applyMiddleware(dataLoaderMiddleware),
     );
-    store
-      .dispatch(userActions.fetchUserRequest('lucy'))
-      .then(() => {
-        expect(store.getState().lucy.error).to.be.equal(true);
-        done();
-      }).catch(done);
+    await store.dispatch(userActions.fetchUserRequest('lucy'));
+    expect(store.getState().lucy.error).to.be.equal(true);
   });
 
-  it('use shouldFetch to prevent fetch()', (done) => {
+  it('use shouldFetch to prevent fetch()', async () => {
     let count = 0;
     const dataLoaderMiddleware = createDataLoaderMiddleware([userLoader], {
       api: {
@@ -198,40 +187,28 @@ describe('createDataLoaderMiddleware', () => {
       reducer,
       applyMiddleware(dataLoaderMiddleware),
     );
-    store
-      .dispatch(userActions.fetchUserRequest('tom'))
-      .then((result) => {
-        expect(result).to.be.deep.equal({
-          type: 'myapp/user/FETCH_USER/SUCCESS',
-          payload: {
-            username: 'tom',
-            data: {
-              age: 21,
-              givenName: 'Tom',
-              familyName: 'TomFamilyName',
-            },
-          },
-        });
-        return store.dispatch(userActions.fetchUserRequest('tom'));
-      })
-      .then((result) => {
-        expect(result).to.be.equal(undefined);
-        return store.dispatch(userActions.fetchUserRequest('tom'));
-      })
-      .then(() => {
-        expect(count).to.be.equal(1);
-        expect(store.getState()).to.be.deep.equal({
-          tom: {
-            age: 21,
-            givenName: 'Tom',
-            familyName: 'TomFamilyName',
-          },
-        });
-        done();
-      })
-      .catch(done);
-  });
-
-  it('prevent duplicated call', () => {
+    const result1 = await store.dispatch(userActions.fetchUserRequest('tom'));
+    expect(result1).to.be.deep.equal({
+      type: 'myapp/user/FETCH_USER/SUCCESS',
+      payload: {
+        username: 'tom',
+        data: {
+          age: 21,
+          givenName: 'Tom',
+          familyName: 'TomFamilyName',
+        },
+      },
+    });
+    const result2 = await store.dispatch(userActions.fetchUserRequest('tom'));
+    expect(result2).to.be.equal(undefined);
+    await store.dispatch(userActions.fetchUserRequest('tom'));
+    expect(count).to.be.equal(1);
+    expect(store.getState()).to.be.deep.equal({
+      tom: {
+        age: 21,
+        givenName: 'Tom',
+        familyName: 'TomFamilyName',
+      },
+    });
   });
 });

@@ -1,6 +1,6 @@
 # Redux Data Loader
 
-[![Build Status](https://travis-ci.org/kouhin/redux-dataloader.svg?branch=master)](https://travis-ci.org/kouhin/redux-dataloader)
+[![CircleCI](https://circleci.com/gh/kouhin/redux-dataloader.svg?style=svg)](https://circleci.com/gh/kouhin/redux-dataloader)
 [![npm](https://img.shields.io/npm/v/redux-dataloader.svg)](https://npmjs.org/package/redux-dataloader)
 
 Loads async data for Redux apps focusing on preventing duplicated requests and dealing with async dependencies.
